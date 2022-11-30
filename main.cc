@@ -17,19 +17,23 @@ bool startGame(std::string player1, std::string player2){
 
   //make new observers 
   std::unique_ptr<Observer> textDisplay = std::make_unique<TextObserver>(&studio);
-  //std::unique_ptr<Observer> graphicalDisplay = std::make_unique<GraphicalObserver>(&studio, new Xwindow(10*(BOARD_SIZE), 10*(BOARD_SIZE)));
+  std::unique_ptr<Xwindow> graphicalWindow = std::make_unique<Xwindow>(30*(BOARD_SIZE), 30*(BOARD_SIZE));
+  std::unique_ptr<Observer> graphicalDisplay = std::make_unique<GraphicalObserver>(&studio, graphicalWindow.get());
 
   std::string command;
 
   while (std::cin >> command) {
     if (command == "render" ) {
       studio.render();
-    } 
+    } else if (command == "resign") {
+      //add conditions to leave 
+      break;
+    }
   }
 
   //detach observers
   studio.detach(textDisplay.get());
-  //studio.detach(textDisplay);    
+  studio.detach(graphicalDisplay.get()); 
   return 0;
 }; 
 
@@ -41,20 +45,24 @@ void startSetup(){
 
   //make new observers 
   std::unique_ptr<Observer> textDisplay = std::make_unique<TextObserver>(&studio);
-  //std::unique_ptr<Observer> graphicalDisplay = std::make_unique<GraphicalObserver>(&studio, new Xwindow(10*(BOARD_SIZE), 10*(BOARD_SIZE)));
+  std::unique_ptr<Xwindow> graphicalWindow = std::make_unique<Xwindow>(30*(BOARD_SIZE), 30*(BOARD_SIZE));
+  std::unique_ptr<Observer> graphicalDisplay = std::make_unique<GraphicalObserver>(&studio, graphicalWindow.get());
 
   std::string command;
 
   while (std::cin >> command) {
     if (command == "render" ) {
       studio.render();
-    } 
+    } else if (command == "done") {
+      //add conditions to leave 
+      break;
+    }
   }
 
   //detach observers
   studio.detach(textDisplay.get());
-  //studio.detach(textDisplay);    
-
+  studio.detach(graphicalDisplay.get());
+  return;
 }; 
 
 
@@ -66,6 +74,7 @@ int main () {
 
   std::string command;
 
+  //once CONTROL-D is pressed, the while loop ecits 
   while (std::cin >> command) {
     if (command == "game") {
         std::string player1;
@@ -83,7 +92,7 @@ int main () {
   }
 
   std::cout << "Final Score:" << std::endl;
-  std::cout << "White:" << whiteScore << std::endl;
-  std::cout << "Black:" << blackScore << std::endl;
-
+  std::cout << "White: " << whiteScore << std::endl;
+  std::cout << "Black: " << blackScore << std::endl;
+  return 0;
 }
