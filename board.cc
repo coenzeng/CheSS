@@ -112,7 +112,8 @@ void Board::makeMove(int startRow, int startCol, int endRow, int endCol)
 bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, size_t endRow, size_t endCol)
 {
     //check boundaries 
-    if (startRow < 0 || startCol < 0 || endRow >= BOARD_SIZE || endCol >= BOARD_SIZE)
+    if (startRow < 0 || startCol < 0 || endRow< 0 || endCol < 0 || 
+        startRow >= BOARD_SIZE || startCol >= BOARD_SIZE || endRow >= BOARD_SIZE || endCol >= BOARD_SIZE)
     {
         return false;
     };
@@ -152,7 +153,7 @@ bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, si
         return false;
     }
 
-    return getPiece(startRow, startCol)->isValidMove(startRow, startCol, endRow, endCol);
+    return getPiece(startRow, startCol)->isValidMove(this, startRow, startCol, endRow, endCol, isWhitePlayer);
 
 };
 

@@ -1,6 +1,6 @@
 #ifndef PIECE_H
 #define PIECE_H
-//#include "board.h"
+class Board;
 #include <iostream>
 
 class Board;
@@ -13,7 +13,7 @@ class Piece {
         virtual ~Piece();
         bool isWhite();
         virtual char charAt(int row, int col) = 0;
-        virtual bool isValidMove(int startRow, int startCol, int endRow, int endCol) = 0;
+        virtual bool isValidMove(Board* board, int startRow, int startCol, int endRow, int endCol, bool isWhitePlayer) = 0;
 };
 
 #endif

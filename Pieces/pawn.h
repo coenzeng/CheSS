@@ -8,7 +8,7 @@ class Pawn: public Piece {
         Pawn(bool isWhite);  
         ~Pawn();
         char charAt(int row, int col);
-        bool isValidMove(int startRow, int startCol, int endRow, int endCol);
+        bool isValidMove(Board* board, int startRow, int startCol, int endRow, int endCol, bool isWhitePlayer);
 };
 
 #endif
