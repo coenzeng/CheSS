@@ -156,6 +156,31 @@ bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, si
 
 };
 
+bool Board::anyValidMoves(bool isWhitePlayer, size_t startRow, size_t startCol) {
+    //Any valid Pawn moves?
+        if (charAt(startRow, startCol) == 'p') {
+            {
+                for (int numSteps = 1; numSteps <= 2; numSteps++) {
+                if (isValidMove(true, startRow, startCol, endRow + numSteps, startCol)) {
+                    return true;
+                }
+                else return false;
+                }
+            }
+        }
+        if (charAt(startRow, startCol) == 'P') {
+            {
+                for (int numSteps = 1; numSteps <= 2; numSteps++) {
+                if (isValidMove(false, startRow, startCol, endRow - numSteps, startCol)) {
+                    return true;
+                }
+                else return false;
+                }
+            }
+        }
+
+    }
+
 //check if the player is in check
 bool Board::isCheck()
 {
