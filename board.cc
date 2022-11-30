@@ -157,6 +157,32 @@ bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, si
 
 };
 
+bool Board::anyValidMoves(bool isWhitePlayer, size_t startRow, size_t startCol) {
+    //Any valid Pawn moves?
+        if (charAt(startRow, startCol) == 'p') {
+            {
+                for (int numSteps = 1; numSteps <= 2; numSteps++) {
+                if (isValidMove(true, startRow, startCol, endRow + numSteps, startCol)) {
+                    return true;
+                }
+                else return false;
+                }
+            }
+        }
+        if (charAt(startRow, startCol) == 'P') {
+            {
+                for (int numSteps = 1; numSteps <= 2; numSteps++) {
+                if (isValidMove(false, startRow, startCol, endRow - numSteps, startCol)) {
+                    return true;
+                }
+                else return false;
+                }
+            }
+        }
+
+    }
+
+//check if the player is in check
 bool Board::isCheck()
 {
     return true;
@@ -164,11 +190,27 @@ bool Board::isCheck()
 
 bool Board::isCheckmate()
 {
-    return true;
+    if(isCheck){
+    //the fn below does not exist yet but anyValidMoves should check for all
+    // possible moves minus all illegal moves for each piece
+        if(!anyValidMoves){
+            cout << ("Checkmate") << endl;
+            return true;
+        }
+        return false;
+        }
 };
 
 bool Board::isStalemate()
 {
-    return true;
+    if(!isCheck){
+    //the fn below does not exist yet but anyValidMoves should check for all
+    // possible moves minus all illegal moves for each piece
+        if(!anyValidMoves){
+            cout << ("Stalemate") << endl;
+            return true;
+        }
+        return false;
+        }
 };
 
