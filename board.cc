@@ -1,7 +1,6 @@
 #include "board.h"
 
-Board::Board() 
-{
+Board::Board() {
     createEmptyBoard();
 };
 
@@ -85,21 +84,68 @@ char Board::charAt(int row, int col)
     return getPiece(row, col)->charAt(row, col);
 };
 
-void Board::setPiece(int row, int col)
+void Board::setPiece(char pieceSymbol, int row, int col)
 {
+    switch(pieceSymbol) {
+        case 'b':
+            chessBoard[row][col] = std::make_unique<Bishop>(false); 
+            break;
+        case 'B':
+            chessBoard[row][col] = std::make_unique<Bishop>(true); 
+            break;
+        case 'k':
+            chessBoard[row][col] = std::make_unique<King>(false); 
+            break;
+        case 'K':
+            chessBoard[row][col] = std::make_unique<King>(true); 
+            break;
+        case 'n':
+            chessBoard[row][col] = std::make_unique<Knight>(false); 
+            break;
+        case 'N':
+            chessBoard[row][col] = std::make_unique<Knight>(true); 
+            break;
+        case 'p':
+            chessBoard[row][col] = std::make_unique<Pawn>(false); 
+            break;
+        case 'P':
+            chessBoard[row][col] = std::make_unique<Pawn>(true); 
+            break;
+        case 'q':
+            chessBoard[row][col] = std::make_unique<Queen>(false); 
+            break;
+        case 'Q':
+            chessBoard[row][col] = std::make_unique<Queen>(true); 
+            break;
+        case 'r':
+            chessBoard[row][col] = std::make_unique<Rook>(false); 
+            break;
+        case 'R':
+            chessBoard[row][col] = std::make_unique<Rook>(true); 
+            break;
+        default:
+            break;
+    }
     return;
-}
+};
 
 void Board::unSetPiece(int row, int col)
 {
+    chessBoard[row][col] = std::make_unique<BlankPiece>(true);
     return;
-}
+};
 
-//not finished yet
 void Board::makeMove(int startRow, int startCol, int endRow, int endCol)
 {
-    unSetPiece(startRow, startCol); //this should return a piece pointer
-    setPiece(endRow, endCol); //pass in the piece pointer that was returned above
+    unSetPiece(startRow, startCol); 
+    setPiece(charAt(startRow, startCol), endRow, endCol); 
+};
+
+bool Board::isValidCoordinate(size_t row, size_t col){
+    if (row < 0 || col < 0 || row >= BOARD_SIZE || col >= BOARD_SIZE){
+        return false;
+    };
+    return true;
 }
 
 //Board::isValidMove()
@@ -112,8 +158,7 @@ void Board::makeMove(int startRow, int startCol, int endRow, int endCol)
 bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, size_t endRow, size_t endCol)
 {
     //check boundaries 
-    if (startRow < 0 || startCol < 0 || endRow< 0 || endCol < 0 || 
-        startRow >= BOARD_SIZE || startCol >= BOARD_SIZE || endRow >= BOARD_SIZE || endCol >= BOARD_SIZE)
+    if (!isValidCoordinate(startRow, startCol) || !isValidCoordinate(endRow, endCol))
     {
         return false;
     };
@@ -157,30 +202,30 @@ bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, si
 
 };
 
-bool Board::anyValidMoves(bool isWhitePlayer, size_t startRow, size_t startCol) {
-    //Any valid Pawn moves?
-        if (charAt(startRow, startCol) == 'p') {
-            {
-                for (int numSteps = 1; numSteps <= 2; numSteps++) {
-                if (isValidMove(true, startRow, startCol, endRow + numSteps, startCol)) {
-                    return true;
-                }
-                else return false;
-                }
-            }
-        }
-        if (charAt(startRow, startCol) == 'P') {
-            {
-                for (int numSteps = 1; numSteps <= 2; numSteps++) {
-                if (isValidMove(false, startRow, startCol, endRow - numSteps, startCol)) {
-                    return true;
-                }
-                else return false;
-                }
-            }
-        }
+// bool Board::anyValidMoves(bool isWhitePlayer, size_t startRow, size_t startCol) {
+//     //Any valid Pawn moves?
+//         if (charAt(startRow, startCol) == 'p') {
+//             {
+//                 for (int numSteps = 1; numSteps <= 2; numSteps++) {
+//                 if (isValidMove(true, startRow, startCol, endRow + numSteps, startCol)) {
+//                     return true;
+//                 }
+//                 else return false;
+//                 }
+//             }
+//         }
+//         if (charAt(startRow, startCol) == 'P') {
+//             {
+//                 for (int numSteps = 1; numSteps <= 2; numSteps++) {
+//                 if (isValidMove(false, startRow, startCol, endRow - numSteps, startCol)) {
+//                     return true;
+//                 }
+//                 else return false;
+//                 }
+//             }
+//         }
 
-    }
+//     }
 
 //check if the player is in check
 bool Board::isCheck()
@@ -190,27 +235,29 @@ bool Board::isCheck()
 
 bool Board::isCheckmate()
 {
-    if(isCheck){
-    //the fn below does not exist yet but anyValidMoves should check for all
-    // possible moves minus all illegal moves for each piece
-        if(!anyValidMoves){
-            cout << ("Checkmate") << endl;
-            return true;
-        }
-        return false;
-        }
+    // if(isCheck){
+    // //the fn below does not exist yet but anyValidMoves should check for all
+    // // possible moves minus all illegal moves for each piece
+    //     if(!anyValidMoves){
+    //         cout << ("Checkmate") << endl;
+    //         return true;
+    //     }
+    //     return false;
+    //     }
+    return true;
 };
 
 bool Board::isStalemate()
 {
-    if(!isCheck){
-    //the fn below does not exist yet but anyValidMoves should check for all
-    // possible moves minus all illegal moves for each piece
-        if(!anyValidMoves){
-            cout << ("Stalemate") << endl;
-            return true;
-        }
-        return false;
-        }
+    // if(!isCheck){
+    // //the fn below does not exist yet but anyValidMoves should check for all
+    // // possible moves minus all illegal moves for each piece
+    //     if(!anyValidMoves){
+    //         cout << ("Stalemate") << endl;
+    //         return true;
+    //     }
+    //     return false;
+    //     }
+    return true;
 };
 

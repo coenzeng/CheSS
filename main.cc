@@ -1,10 +1,47 @@
 #include <iostream>
 #include <vector>
+#include <string>
+#include <map>
 #include "board.h"
 #include "View/chessStudio.h"
 #include "View/textObserver.h"
 #include "View/graphicalObserver.h"
 #include "View/observer.h"
+
+std::map<char, int> columnLetterToNumber{ 
+  {'a', 0}, {'A', 0}, 
+  {'b', 1}, {'B', 1},
+  {'c', 2}, {'C', 2},
+  {'d', 3}, {'D', 3},
+  {'e', 4}, {'E', 4},
+  {'f', 5}, {'F', 5},
+  {'g', 6}, {'G', 6},
+  {'h', 7}, {'H', 7}
+};
+
+std::vector<char> symbolList{'b', 'k', 'n', 'p', 'q', 'r', 'B', 'K', 'N', 'P', 'R'};
+
+bool isValidSymbol(char symbol){
+  for (size_t i = 0; i < symbolList.size(); i++){
+    if (symbolList[i] == symbol){
+        return true;
+    }
+  }
+  return false;
+}
+
+std::pair<int, int> notationToCoordinates(std::string notation){
+
+  //returns (-1, -1) if notation is not valid 
+  //check that the key (notation[0]) is in map before accessing it
+  if (notation.length() != 2 || !isalpha(notation[0]) || !isdigit(notation[1]) || !columnLetterToNumber.count(notation[0])){
+    return std::make_pair(-1, -1);
+  }
+
+  int row = notation[1] - '0' - 1; //subtract one to make it zero-indexed
+  int col = columnLetterToNumber[notation[0]];
+  return std::make_pair(row, col);;
+};
 
 //return 0 if black wins 
 //return 1 if white wins
@@ -25,7 +62,7 @@ bool startGame(std::string player1, std::string player2){
   while (std::cin >> command) {
     if (command == "render" ) {
       studio.render();
-    } else if (command == "resign") {
+    } else if (command == "resign" ) {
       //add conditions to leave 
       break;
     }
@@ -51,11 +88,33 @@ void startSetup(){
   std::string command;
 
   while (std::cin >> command) {
-    if (command == "render" ) {
+    if (command == "render") {
       studio.render();
     } else if (command == "done") {
       //add conditions to leave 
       break;
+    }
+    else if (command == "+") {
+      char pieceSymbol;
+      std::string location;
+      std::cin >> pieceSymbol >> location;
+      std::pair<int, int> coordinates = notationToCoordinates(location);
+      std::cout << "hi" << std::endl;
+      std::cout << coordinates.first << coordinates.second << std::endl;
+      if (board->isValidCoordinate(coordinates.first, coordinates.second) && isValidSymbol(pieceSymbol)){
+        board->setPiece(pieceSymbol, coordinates.first, coordinates.second);
+      }
+      studio.render();
+
+    } else if (command == "-") {
+      std::string location;
+      std::cin >> location;
+      std::pair<int, int> coordinates = notationToCoordinates(location);
+      if (board->isValidCoordinate(coordinates.first, coordinates.second)){
+        board->unSetPiece(coordinates.first, coordinates.second);
+      }
+      studio.render();
+
     }
   }
 
@@ -90,7 +149,7 @@ int main () {
       startSetup();
     }
   }
-
+  
   std::cout << "Final Score:" << std::endl;
   std::cout << "White: " << whiteScore << std::endl;
   std::cout << "Black: " << blackScore << std::endl;
