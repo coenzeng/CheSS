@@ -261,3 +261,37 @@ bool Board::isStalemate()
     return true;
 };
 
+bool Board::hasOneWhiteKing()
+{
+    int whiteKingCount = 0;
+    for (size_t i = 0; i < BOARD_SIZE; i++){
+        for (size_t j = 0; j < BOARD_SIZE; j++){
+            if (charAt(i, j) == 'K'){
+                whiteKingCount += 1;
+            }
+        }
+    }
+    return whiteKingCount == 1;
+};
+bool Board::hasOneBlackKing()
+{
+    int blackKingCount = 0;
+    for (size_t i = 0; i < BOARD_SIZE; i++){
+        for (size_t j = 0; j < BOARD_SIZE; j++){
+            if (charAt(i, j) == 'k'){
+                blackKingCount += 1;
+            }
+        }
+    }
+    return blackKingCount == 1;
+};
+bool Board::hasNoPawnsFirstLastRow()
+{
+    for (size_t j = 0; j < BOARD_SIZE; j++){
+       if (charAt(0, j) == 'P') return false;
+       if (charAt(0, j) == 'p') return false;
+       if (charAt(BOARD_SIZE - 1, j) == 'P') return false;
+       if (charAt(BOARD_SIZE - 1, j) == 'p') return false;
+    }
+    return true;
+};

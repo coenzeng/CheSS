@@ -35,6 +35,11 @@ class Board {
     bool isCheckmate();
     bool isStalemate();
 
+    //the following functions are for the setup mode
+    bool hasOneWhiteKing();
+    bool hasOneBlackKing();
+    bool hasNoPawnsFirstLastRow();
+
 };
 
 #endif

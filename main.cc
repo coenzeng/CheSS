@@ -85,6 +85,7 @@ void startSetup(){
   std::unique_ptr<Xwindow> graphicalWindow = std::make_unique<Xwindow>(30*(BOARD_SIZE), 30*(BOARD_SIZE));
   std::unique_ptr<Observer> graphicalDisplay = std::make_unique<GraphicalObserver>(&studio, graphicalWindow.get());
 
+  std::string startColour = "white";
   std::string command;
 
   while (std::cin >> command) {
@@ -92,15 +93,18 @@ void startSetup(){
       studio.render();
     } else if (command == "done") {
       //add conditions to leave 
-      break;
+      if (board->hasOneWhiteKing() && board->hasOneBlackKing() && board->hasNoPawnsFirstLastRow()){ //also board-> isCheck()
+        break;
+      } else {
+        std::cout << "Conditions not satisfied to leave setup mode." << std::endl;
+      }
     }
     else if (command == "+") {
       char pieceSymbol;
       std::string location;
       std::cin >> pieceSymbol >> location;
       std::pair<int, int> coordinates = notationToCoordinates(location);
-      std::cout << "hi" << std::endl;
-      std::cout << coordinates.first << coordinates.second << std::endl;
+
       if (board->isValidCoordinate(coordinates.first, coordinates.second) && isValidSymbol(pieceSymbol)){
         board->setPiece(pieceSymbol, coordinates.first, coordinates.second);
       }
@@ -114,6 +118,12 @@ void startSetup(){
         board->unSetPiece(coordinates.first, coordinates.second);
       }
       studio.render();
+    } else if (command == "+") {
+      std::string colour;
+      std::cin >> colour;
+      if (colour == "white" || colour == "black"){
+        startColour = colour;
+      }
 
     }
   }
