@@ -1,167 +1,46 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <map>
-#include "board.h"
-#include "View/chessStudio.h"
-#include "View/textObserver.h"
-#include "View/graphicalObserver.h"
-#include "View/observer.h"
+#include "game.h"
 
-std::map<char, int> columnLetterToNumber{ 
-  {'a', 0}, {'A', 0}, 
-  {'b', 1}, {'B', 1},
-  {'c', 2}, {'C', 2},
-  {'d', 3}, {'D', 3},
-  {'e', 4}, {'E', 4},
-  {'f', 5}, {'F', 5},
-  {'g', 6}, {'G', 6},
-  {'h', 7}, {'H', 7}
-};
-
-std::vector<char> symbolList{'b', 'k', 'n', 'p', 'q', 'r', 'B', 'K', 'N', 'P', 'R'};
-
-bool isValidSymbol(char symbol){
-  for (size_t i = 0; i < symbolList.size(); i++){
-    if (symbolList[i] == symbol){
-        return true;
-    }
+//check that the input for player is valid 
+bool isPlayerValid(std::string player)
+{
+  if (player == "human" || player == "computer1" || player == "computer2" || player == "computer3"){
+    return true;
   }
   return false;
 }
 
-std::pair<int, int> notationToCoordinates(std::string notation){
-
-  //returns (-1, -1) if notation is not valid 
-  //check that the key (notation[0]) is in map before accessing it
-  if (notation.length() != 2 || !isalpha(notation[0]) || !isdigit(notation[1]) || !columnLetterToNumber.count(notation[0])){
-    return std::make_pair(-1, -1);
-  }
-
-  int row = notation[1] - '0' - 1; //subtract one to make it zero-indexed
-  int col = columnLetterToNumber[notation[0]];
-  return std::make_pair(row, col);;
-};
-
-//return 0 if black wins 
-//return 1 if white wins
-bool startGame(std::string player1, std::string player2){
-
-  //make a new board
-  std::unique_ptr<Board> board = std::make_unique<Board>();
-  board->createStartingBoard();
-  ChessStudio studio{board.get()};
-
-  //make new observers 
-  std::unique_ptr<Observer> textDisplay = std::make_unique<TextObserver>(&studio);
-  std::unique_ptr<Xwindow> graphicalWindow = std::make_unique<Xwindow>(30*(BOARD_SIZE), 30*(BOARD_SIZE));
-  std::unique_ptr<Observer> graphicalDisplay = std::make_unique<GraphicalObserver>(&studio, graphicalWindow.get());
-
-  std::string command;
-
-  while (std::cin >> command) {
-    if (command == "render" ) {
-      studio.render();
-    } else if (command == "resign" ) {
-      //add conditions to leave 
-      break;
-    }
-  }
-
-  //detach observers
-  studio.detach(textDisplay.get());
-  studio.detach(graphicalDisplay.get()); 
-  return 0;
-}; 
-
-void startSetup(){
-  //make a new board
-  std::unique_ptr<Board> board = std::make_unique<Board>();
-  board->createEmptyBoard();
-  ChessStudio studio{board.get()};
-
-  //make new observers 
-  std::unique_ptr<Observer> textDisplay = std::make_unique<TextObserver>(&studio);
-  std::unique_ptr<Xwindow> graphicalWindow = std::make_unique<Xwindow>(30*(BOARD_SIZE), 30*(BOARD_SIZE));
-  std::unique_ptr<Observer> graphicalDisplay = std::make_unique<GraphicalObserver>(&studio, graphicalWindow.get());
-
-  std::string startColour = "white";
-  std::string command;
-
-  while (std::cin >> command) {
-    if (command == "render") {
-      studio.render();
-    } else if (command == "done") {
-      //add conditions to leave 
-      if (board->hasOneWhiteKing() && board->hasOneBlackKing() && board->hasNoPawnsFirstLastRow()){ //also board-> isCheck()
-        break;
-      } else {
-        std::cout << "Conditions not satisfied to leave setup mode." << std::endl;
-      }
-    }
-    else if (command == "+") {
-      char pieceSymbol;
-      std::string location;
-      std::cin >> pieceSymbol >> location;
-      std::pair<int, int> coordinates = notationToCoordinates(location);
-
-      if (board->isValidCoordinate(coordinates.first, coordinates.second) && isValidSymbol(pieceSymbol)){
-        board->setPiece(pieceSymbol, coordinates.first, coordinates.second);
-      }
-      studio.render();
-
-    } else if (command == "-") {
-      std::string location;
-      std::cin >> location;
-      std::pair<int, int> coordinates = notationToCoordinates(location);
-      if (board->isValidCoordinate(coordinates.first, coordinates.second)){
-        board->unSetPiece(coordinates.first, coordinates.second);
-      }
-      studio.render();
-    } else if (command == "+") {
-      std::string colour;
-      std::cin >> colour;
-      if (colour == "white" || colour == "black"){
-        startColour = colour;
-      }
-
-    }
-  }
-
-  //detach observers
-  studio.detach(textDisplay.get());
-  studio.detach(graphicalDisplay.get());
-  return;
-}; 
-
-
-
+//"game" starts a new game. Either the board is the default starting board,
+//or it's the board made in setup mode
+//"setup" enters setup mode
+//"reset" wipes out every change made in setup mode. 
+//it resets the default board and makes white starting player.
 int main () {
 
-  int whiteScore = 0;
-  int blackScore = 0;
-
   std::string command;
+  
+  std::unique_ptr<Game> game = std::make_unique<Game>();
 
-  //once CONTROL-D is pressed, the while loop ecits 
+  //press control-D to exit while loop
   while (std::cin >> command) {
     if (command == "game") {
-        std::string player1;
-        std::string player2;
-        std::cin >> player1 >> player2;
-
-        if (startGame(player1, player2)){
-          whiteScore += 1;
-        } else {
-          blackScore += 1;
-        }
+      std::string player1;
+      std::string player2;
+      std::cin >> player1 >> player2;
+      if (isPlayerValid(player1) && isPlayerValid(player2)){
+        game->startGame(player1, player2);
+      }
     } else if (command == "setup") {
-      startSetup();
+      game->startSetup();
+    } else if (command == "reset"){
+      game->resetToDefault();
     }
   }
   
   std::cout << "Final Score:" << std::endl;
-  std::cout << "White: " << whiteScore << std::endl;
-  std::cout << "Black: " << blackScore << std::endl;
+  std::cout << "White: " << Game::getWhiteScore() << std::endl;
+  std::cout << "Black: " << Game::getBlackScore() << std::endl;
   return 0;
 }

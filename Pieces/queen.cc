@@ -18,7 +18,7 @@ bool Queen::isValidMove(Board* board, int startRow, int startCol, int endRow, in
     Rook tempRook{isWhitePlayer};
     Bishop tempBishop{isWhitePlayer};
 
-    if(tempRook.isValidMove(board, startRow, startCol, endRow, endCol, isWhitePlayer) || tempBishop.isValidMove(board, startRow, startCol, endRow, endCol, isWhitePlayer)){
+    if (tempRook.isValidMove(board, startRow, startCol, endRow, endCol, isWhitePlayer) || tempBishop.isValidMove(board, startRow, startCol, endRow, endCol, isWhitePlayer)){
         return true;
     }
 
