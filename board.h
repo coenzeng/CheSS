@@ -3,6 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <map>
 #include <algorithm> 
 #include "Pieces/piece.h"
 #include "Pieces/bishop.h"
@@ -18,6 +19,7 @@ const size_t BOARD_SIZE = 8;
 class Board {
   private: 
     std::vector<std::vector<std::unique_ptr<Piece>>> chessBoard;
+    static std::map<char, int> columnLetterToNumber;
 
   public:
     Board();
@@ -39,6 +41,8 @@ class Board {
     bool hasOneWhiteKing();
     bool hasOneBlackKing();
     bool hasNoPawnsFirstLastRow();
+
+    static std::pair<int, int> notationToCoordinates(std::string notation);
 
 };
 

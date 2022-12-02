@@ -1,7 +1,19 @@
 #include "board.h"
 
+
+std::map<char, int> Board::columnLetterToNumber{ 
+  {'a', 0}, {'A', 0}, 
+  {'b', 1}, {'B', 1},
+  {'c', 2}, {'C', 2},
+  {'d', 3}, {'D', 3},
+  {'e', 4}, {'E', 4},
+  {'f', 5}, {'F', 5},
+  {'g', 6}, {'G', 6},
+  {'h', 7}, {'H', 7}
+};
+
 Board::Board() {
-    createEmptyBoard();
+    createStartingBoard();
 };
 
 Board::~Board(){
@@ -137,8 +149,9 @@ void Board::unSetPiece(int row, int col)
 
 void Board::makeMove(int startRow, int startCol, int endRow, int endCol)
 {
-    unSetPiece(startRow, startCol); 
+    std::cout << "Coordinates: " << startRow << startCol << endRow << endCol << std::endl;
     setPiece(charAt(startRow, startCol), endRow, endCol); 
+    unSetPiece(startRow, startCol); 
 };
 
 bool Board::isValidCoordinate(size_t row, size_t col){
@@ -162,19 +175,16 @@ bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, si
     {
         return false;
     };
-
     //check if no move was made 
     if (startRow == endRow && startCol == endCol)
     {
         return false;
     }
-
     //check if the start piece is blank
     if (charAt(startRow, startCol) == ' ')
     {
         return false;
     }
-
     //check if white player turn, but is trying to move black piece
     if (isWhitePlayer && !getPiece(startRow, startCol)->isWhite())
     {
@@ -185,19 +195,16 @@ bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, si
     {
         return false;
     }
-
     //check if the player is trying to kill themselves
     if (isWhitePlayer == getPiece(endRow, endCol)->isWhite() && charAt(endRow, endCol) != ' ')
     {
         return false;
     } 
-
     //check if the player is trying to kill a king
     if (charAt(endRow, endCol) == 'K' || charAt(endRow, endCol) == 'k')
     {
         return false;
     }
-
     return getPiece(startRow, startCol)->isValidMove(this, startRow, startCol, endRow, endCol, isWhitePlayer);
 
 };
@@ -261,6 +268,8 @@ bool Board::isStalemate()
     return true;
 };
 
+
+//for setup mode
 bool Board::hasOneWhiteKing()
 {
     int whiteKingCount = 0;
@@ -294,4 +303,18 @@ bool Board::hasNoPawnsFirstLastRow()
        if (charAt(BOARD_SIZE - 1, j) == 'p') return false;
     }
     return true;
+};
+
+//this function converts position notation (like e3) to coordinates 
+std::pair<int, int> Board::notationToCoordinates(std::string notation){
+
+  //returns (-1, -1) if notation is not valid 
+  //check that the key (notation[0]) is in map before accessing it
+  if (notation.length() != 2 || !isalpha(notation[0]) || !isdigit(notation[1]) || !columnLetterToNumber.count(notation[0])){
+    return std::make_pair(-1, -1);
+  }
+
+  int row = BOARD_SIZE - (notation[1] - '0'); //do BOARD_SIZE - input since row is reversed
+  int col = columnLetterToNumber[notation[0]];
+  return std::make_pair(row, col);;
 };

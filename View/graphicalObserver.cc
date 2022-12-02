@@ -3,7 +3,6 @@
 GraphicalObserver::GraphicalObserver(ChessStudio* studio, Xwindow * window): studio{studio}, window{window}
 {
     studio->attach(this);
-    render();
 };
 
 GraphicalObserver::~GraphicalObserver(){};

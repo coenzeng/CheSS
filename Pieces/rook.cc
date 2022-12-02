@@ -34,7 +34,7 @@ bool Rook::isValidMove(Board* board, int startRow, int startCol, int endRow, int
     pathLength = max(abs(startCol - endCol), abs(startRow - endRow));
     
     // Either directionX or directionY is 0, and the other is -1 or 1
-    for(int i = 0; i < pathLength; i++){
+    for(int i = 0; i < pathLength - 1; i++){
         int indX = startCol + directionX; // one of them will stay constant
         int indY = startRow + directionY;
         if(board->getPiece(indY, indX)->charAt(indY, indX) !=  ' '){

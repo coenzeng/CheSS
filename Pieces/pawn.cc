@@ -52,9 +52,11 @@ bool Pawn::isValidMove(Board* board, int startRow, int startCol, int endRow, int
         }
 
         return false;
-    }else{
+    } else {
         bool isFwdDiagBy1 = (endRow == startRow + 1) && ((endCol == startCol - 1) || (endCol == startCol + 1));
-        if(isFwdDiagBy1 && (board->getPiece(endRow, endCol)->isWhite())){ 
+
+        //check that not equal to blankPiece, since all blankPieces are initialized as white
+        if(isFwdDiagBy1 && board->getPiece(endRow, endCol)->isWhite() && board->charAt(endRow, endCol) != ' '){ 
             return true;
         }
         // pawn en passant (to be coded)

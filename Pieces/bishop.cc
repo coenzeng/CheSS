@@ -30,7 +30,7 @@ bool Bishop::isValidMove(Board* board, int startRow, int startCol, int endRow, i
     directionX = signbit(colDiff) ? 1 : -1; // 1 refers to traversing rightward
     directionY = signbit(rowDiff) ? 1 : -1; // 1 refers to traversing downward
 
-    for(int i = 0; i < pathLength; i++){
+    for(int i = 0; i < pathLength - 1; i++){
         int indX = startCol + directionX; 
         int indY = startRow + directionY;
         if(board->getPiece(indX, indY)->charAt(indX, indY) !=  ' '){
