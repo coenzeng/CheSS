@@ -156,60 +156,75 @@ bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, si
 
 };
 
-bool Board::anyValidMoves(bool isWhitePlayer, size_t startRow, size_t startCol) {
-    //Any valid Pawn moves?
-        if (charAt(startRow, startCol) == 'p') {
-            {
-                for (int numSteps = 1; numSteps <= 2; numSteps++) {
-                if (isValidMove(true, startRow, startCol, endRow + numSteps, startCol)) {
-                    return true;
-                }
-                else return false;
-                }
-            }
-        }
-        if (charAt(startRow, startCol) == 'P') {
-            {
-                for (int numSteps = 1; numSteps <= 2; numSteps++) {
-                if (isValidMove(false, startRow, startCol, endRow - numSteps, startCol)) {
-                    return true;
-                }
-                else return false;
-                }
-            }
-        }
 
-    }
 
 //check if the player is in check
-bool Board::isCheck()
+bool Board::isCheck(bool checkingWhiteKing, int offSetRow, int offSetCol)
 {
-    return true;
+    if (checkingWhiteKing == true) {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; row++) {
+                if (charAt(row, col) == 'r'  charAt(row, col) == 'n'  charAt(row, col) == 'b'  
+                    charAt(row, col) == 'q'  charAt(row, col) == 'p') {
+                if (isValidMove(true, row, col, whiteKingRow + offSetRow, whiteKingCol + offSetCol)) {
+                    return true;
+                }
+                return false;
+                }
+            }
+
+
+
+        }
+    }
+    else if (checkingWhiteKing == false){
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; row++) {
+                if (charAt(row, col) == 'R'  charAt(row, col) == 'N'  charAt(row, col) == 'B'  
+                    charAt(row, col) == 'Q'  charAt(row, col) == 'P') {
+                if (isValidMove(true, row, col, blackKingRow, blackKingCol)) {
+                    return true;
+                }
+                return false;
+                }
+            }
+        }
+    }
 };
 
-bool Board::isCheckmate()
+bool Board::isCheckmate(bool checkingWhite)
 {
-    if(isCheck){
-    //the fn below does not exist yet but anyValidMoves should check for all
-    // possible moves minus all illegal moves for each piece
-        if(!anyValidMoves){
-            cout << ("Checkmate") << endl;
-            return true;
-        }
-        return false;
-        }
+    if (isCheck(checkingWhite, 0, 0) ) {
+        if { (isCheck(checkingWhite, -1, 0)) 
+        && (isCheck(checkingWhite, 0, -1))
+        && (isCheck(checkingWhite, 1, 0)) 
+        && (isCheck(checkingWhite, 0, 1)) 
+        && (isCheck(checkingWhite, -1, 1))
+        && (isCheck(checkingWhite, 1, -1))
+        && (isCheck(checkingWhite, 1, 1))
+        && (isCheck(checkingWhite, -1, -1)) 
+            return true; }
+        else { return false; } }
+
+
+    else { return false; }
 };
 
-bool Board::isStalemate()
+bool Board::isStalemate(bool checkingWhite)
 {
-    if(!isCheck){
-    //the fn below does not exist yet but anyValidMoves should check for all
-    // possible moves minus all illegal moves for each piece
-        if(!anyValidMoves){
-            cout << ("Stalemate") << endl;
-            return true;
-        }
-        return false;
-        }
+    if (!isCheck(checkingWhite, 0, 0)) {
+        if { (isCheck(checkingWhite, -1, 0)) 
+        && (isCheck(checkingWhite, 0, -1))
+        && (isCheck(checkingWhite, 1, 0)) 
+        && (isCheck(checkingWhite, 0, 1)) 
+        && (isCheck(checkingWhite, -1, 1))
+        && (isCheck(checkingWhite, 1, -1))
+        && (isCheck(checkingWhite, 1, 1))
+        && (isCheck(checkingWhite, -1, -1)) 
+            return true; }
+        else { return false; } }
+
+
+    else { return false; }
 };
 
