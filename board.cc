@@ -1,8 +1,19 @@
 #include "board.h"
 
-Board::Board() 
-{
-    createEmptyBoard();
+
+std::map<char, int> Board::columnLetterToNumber{ 
+  {'a', 0}, {'A', 0}, 
+  {'b', 1}, {'B', 1},
+  {'c', 2}, {'C', 2},
+  {'d', 3}, {'D', 3},
+  {'e', 4}, {'E', 4},
+  {'f', 5}, {'F', 5},
+  {'g', 6}, {'G', 6},
+  {'h', 7}, {'H', 7}
+};
+
+Board::Board() {
+    createStartingBoard();
 };
 
 Board::~Board(){
@@ -85,21 +96,69 @@ char Board::charAt(int row, int col)
     return getPiece(row, col)->charAt(row, col);
 };
 
-void Board::setPiece(int row, int col)
+void Board::setPiece(char pieceSymbol, int row, int col)
 {
+    switch(pieceSymbol) {
+        case 'b':
+            chessBoard[row][col] = std::make_unique<Bishop>(false); 
+            break;
+        case 'B':
+            chessBoard[row][col] = std::make_unique<Bishop>(true); 
+            break;
+        case 'k':
+            chessBoard[row][col] = std::make_unique<King>(false); 
+            break;
+        case 'K':
+            chessBoard[row][col] = std::make_unique<King>(true); 
+            break;
+        case 'n':
+            chessBoard[row][col] = std::make_unique<Knight>(false); 
+            break;
+        case 'N':
+            chessBoard[row][col] = std::make_unique<Knight>(true); 
+            break;
+        case 'p':
+            chessBoard[row][col] = std::make_unique<Pawn>(false); 
+            break;
+        case 'P':
+            chessBoard[row][col] = std::make_unique<Pawn>(true); 
+            break;
+        case 'q':
+            chessBoard[row][col] = std::make_unique<Queen>(false); 
+            break;
+        case 'Q':
+            chessBoard[row][col] = std::make_unique<Queen>(true); 
+            break;
+        case 'r':
+            chessBoard[row][col] = std::make_unique<Rook>(false); 
+            break;
+        case 'R':
+            chessBoard[row][col] = std::make_unique<Rook>(true); 
+            break;
+        default:
+            break;
+    }
     return;
-}
+};
 
 void Board::unSetPiece(int row, int col)
 {
+    chessBoard[row][col] = std::make_unique<BlankPiece>(true);
     return;
-}
+};
 
-//not finished yet
 void Board::makeMove(int startRow, int startCol, int endRow, int endCol)
 {
-    unSetPiece(startRow, startCol); //this should return a piece pointer
-    setPiece(endRow, endCol); //pass in the piece pointer that was returned above
+    std::cout << "Coordinates: " << startRow << startCol << endRow << endCol << std::endl;
+    setPiece(charAt(startRow, startCol), endRow, endCol); 
+    unSetPiece(startRow, startCol); 
+};
+
+bool Board::isValidCoordinate(size_t row, size_t col){
+    if (row < 0 || col < 0 || row >= BOARD_SIZE || col >= BOARD_SIZE){
+        return false;
+    };
+    return true;
 }
 
 //Board::isValidMove()
@@ -112,23 +171,20 @@ void Board::makeMove(int startRow, int startCol, int endRow, int endCol)
 bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, size_t endRow, size_t endCol)
 {
     //check boundaries 
-    if (startRow < 0 || startCol < 0 || endRow >= BOARD_SIZE || endCol >= BOARD_SIZE)
+    if (!isValidCoordinate(startRow, startCol) || !isValidCoordinate(endRow, endCol))
     {
         return false;
     };
-
     //check if no move was made 
     if (startRow == endRow && startCol == endCol)
     {
         return false;
     }
-
     //check if the start piece is blank
     if (charAt(startRow, startCol) == ' ')
     {
         return false;
     }
-
     //check if white player turn, but is trying to move black piece
     if (isWhitePlayer && !getPiece(startRow, startCol)->isWhite())
     {
@@ -139,24 +195,19 @@ bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, si
     {
         return false;
     }
-
     //check if the player is trying to kill themselves
     if (isWhitePlayer == getPiece(endRow, endCol)->isWhite() && charAt(endRow, endCol) != ' ')
     {
         return false;
     } 
-
     //check if the player is trying to kill a king
     if (charAt(endRow, endCol) == 'K' || charAt(endRow, endCol) == 'k')
     {
         return false;
     }
-
-    return getPiece(startRow, startCol)->isValidMove(startRow, startCol, endRow, endCol);
+    return getPiece(startRow, startCol)->isValidMove(this, startRow, startCol, endRow, endCol, isWhitePlayer);
 
 };
-
-
 
 //check if the player is in check
 bool Board::isCheck(bool checkingWhiteKing, int offSetRow, int offSetCol)
@@ -190,6 +241,7 @@ bool Board::isCheck(bool checkingWhiteKing, int offSetRow, int offSetCol)
             }
         }
     }
+
 };
 
 bool Board::isCheckmate(bool checkingWhite)
@@ -228,3 +280,53 @@ bool Board::isStalemate(bool checkingWhite)
     else { return false; }
 };
 
+
+//for setup mode
+bool Board::hasOneWhiteKing()
+{
+    int whiteKingCount = 0;
+    for (size_t i = 0; i < BOARD_SIZE; i++){
+        for (size_t j = 0; j < BOARD_SIZE; j++){
+            if (charAt(i, j) == 'K'){
+                whiteKingCount += 1;
+            }
+        }
+    }
+    return whiteKingCount == 1;
+};
+bool Board::hasOneBlackKing()
+{
+    int blackKingCount = 0;
+    for (size_t i = 0; i < BOARD_SIZE; i++){
+        for (size_t j = 0; j < BOARD_SIZE; j++){
+            if (charAt(i, j) == 'k'){
+                blackKingCount += 1;
+            }
+        }
+    }
+    return blackKingCount == 1;
+};
+bool Board::hasNoPawnsFirstLastRow()
+{
+    for (size_t j = 0; j < BOARD_SIZE; j++){
+       if (charAt(0, j) == 'P') return false;
+       if (charAt(0, j) == 'p') return false;
+       if (charAt(BOARD_SIZE - 1, j) == 'P') return false;
+       if (charAt(BOARD_SIZE - 1, j) == 'p') return false;
+    }
+    return true;
+};
+
+//this function converts position notation (like e3) to coordinates 
+std::pair<int, int> Board::notationToCoordinates(std::string notation){
+
+  //returns (-1, -1) if notation is not valid 
+  //check that the key (notation[0]) is in map before accessing it
+  if (notation.length() != 2 || !isalpha(notation[0]) || !isdigit(notation[1]) || !columnLetterToNumber.count(notation[0])){
+    return std::make_pair(-1, -1);
+  }
+
+  int row = BOARD_SIZE - (notation[1] - '0'); //do BOARD_SIZE - input since row is reversed
+  int col = columnLetterToNumber[notation[0]];
+  return std::make_pair(row, col);;
+};

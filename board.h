@@ -3,6 +3,8 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <map>
+#include <algorithm> 
 #include "Pieces/piece.h"
 #include "Pieces/bishop.h"
 #include "Pieces/blankPiece.h"
@@ -17,6 +19,7 @@ const size_t BOARD_SIZE = 8;
 class Board {
   private: 
     std::vector<std::vector<std::unique_ptr<Piece>>> chessBoard;
+    static std::map<char, int> columnLetterToNumber;
 
   public:
     Board();
@@ -25,13 +28,21 @@ class Board {
     char charAt(int row, int col);
     void createStartingBoard();
     void createEmptyBoard();
-    void setPiece(int row, int col); //probably change this to take in a piece pointer
-    void unSetPiece(int row, int col); //probably change this to return a piece pointer
+    void setPiece(char pieceSymbol, int row, int col); 
+    void unSetPiece(int row, int col); 
     void makeMove(int startRow, int startCol, int endRow, int endCol);
+    bool isValidCoordinate(size_t row, size_t col);
     bool isValidMove(bool isWhitePLayer, size_t startRow, size_t startCol, size_t endRow, size_t endCol);
     bool isCheck();
     bool isCheckmate();
     bool isStalemate();
+
+    //the following functions are for the setup mode
+    bool hasOneWhiteKing();
+    bool hasOneBlackKing();
+    bool hasNoPawnsFirstLastRow();
+
+    static std::pair<int, int> notationToCoordinates(std::string notation);
 
 };
 

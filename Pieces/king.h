@@ -8,7 +8,7 @@ class King: public Piece {
         King(bool isWhite);  
         ~King();
         char charAt(int row, int col);
-        bool isValidMove(int startRow, int startCol, int endRow, int endCol);
+        bool isValidMove(Board* board, int startRow, int startCol, int endRow, int endCol, bool isWhitePlayer);
 };
 
 #endif
