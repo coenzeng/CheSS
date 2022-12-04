@@ -1,6 +1,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-
+#include <stdlib.h> //rand()
 class Board;
 
 class Player {
