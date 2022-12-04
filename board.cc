@@ -195,7 +195,6 @@ bool Board::isValidMove(bool isWhitePlayer, int startRow, int startCol, int endR
 
 };
 
-void Board::updateWhiteKingCoordinates(int row, int col)
 //check if the player is in check
 bool Board::isCheck(bool checkingWhiteKing)
 {
