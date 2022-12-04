@@ -9,7 +9,7 @@ Game::Game():
     board{std::make_unique<Board>()}, 
     studio{board.get()}, 
     textDisplay{std::make_unique<TextObserver>(&studio)},
-    graphicalWindow{std::make_unique<Xwindow>(30*(BOARD_SIZE), 30*(BOARD_SIZE))},
+    graphicalWindow{std::make_unique<Xwindow>(30*(BOARD_SIZE + 1), 30*(BOARD_SIZE + 1))},
     graphicalDisplay{std::make_unique<GraphicalObserver>(&studio, graphicalWindow.get())},
     currentPlayer{"white"}
 {};
@@ -158,8 +158,7 @@ void Game::startGame(std::string player1, std::string player2)
                     //     }
                 }
             }
-
-            
+            studio.render();
         }
 
     }
@@ -188,7 +187,7 @@ int Game::getBlackScore()
 //this function is for setup mode 
 //check if symbol is in the symbolList
 bool Game::isValidSymbol(char symbol){
-  std::vector<char> symbolList{'b', 'k', 'n', 'p', 'q', 'r', 'B', 'K', 'N', 'P', 'R'};
+  std::vector<char> symbolList{'b', 'k', 'n', 'p', 'q', 'r', 'B', 'K', 'N', 'P', 'R', 'Q'};
   for (size_t i = 0; i < symbolList.size(); i++){
     if (symbolList[i] == symbol){
         return true;

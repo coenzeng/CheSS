@@ -154,7 +154,7 @@ void Board::unSetPiece(int row, int col)
 
 void Board::makeMove(int startRow, int startCol, int endRow, int endCol)
 {
-    std::cout << "Coordinates: " << startRow << startCol << endRow << endCol << std::endl;
+    std::cout << "("<<8 - startCol<<", "<<startRow<<") to ("<<8 - endCol<<", "<<endRow<<")"<<std::endl;
     setPiece(charAt(startRow, startCol), endRow, endCol); 
     unSetPiece(startRow, startCol); 
 };
