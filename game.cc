@@ -9,7 +9,7 @@ Game::Game():
     board{std::make_unique<Board>()}, 
     studio{board.get()}, 
     textDisplay{std::make_unique<TextObserver>(&studio)},
-    graphicalWindow{std::make_unique<Xwindow>(30*(BOARD_SIZE), 30*(BOARD_SIZE))},
+    graphicalWindow{std::make_unique<Xwindow>(30*(BOARD_SIZE + 1), 30*(BOARD_SIZE + 1))},
     graphicalDisplay{std::make_unique<GraphicalObserver>(&studio, graphicalWindow.get())},
     currentPlayer{"white"}
 {};
@@ -165,8 +165,7 @@ void Game::startGame(std::string player1, std::string player2)
 
                 }
             }
-
-            
+            studio.render();
         }
 
     }
