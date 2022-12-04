@@ -119,14 +119,43 @@ void Game::startGame(std::string player1, std::string player2)
             return;
         } else if (command == "move") {
 
-            //if a move is made, switch the players turn 
+            //if a move is made, switch the players turn and check win conditions
             if (currentPlayer == "white"){
                 if (whitePlayer->makeMove(board.get())){
                     currentPlayer = "black";
+                    
+
+                    //check win conditions
+                    // if isCheck(false){
+
+                    //     std::cout << "Black is in check." << std::endl; 
+                    //     if (isCheckmate(false)){
+                    //         incrementWhiteScore();
+                    //         std::cout << "Checkmate, white wins." << std::endl;
+                    //         return;
+                    //     } else if (isStalemate()){
+                    //         std::cout << "Stalemate." << std::endl;
+                    //         return;
+                    //     }
+                    // }
                 }
             } else {
                 if (blackPlayer->makeMove(board.get())){
                     currentPlayer = "white";
+
+                    //check win conditions
+                    // if isCheck(true){
+
+                    //     std::cout << "White is in check." << std::endl; 
+                    //     if (isCheckmate(true)){
+                    //         incrementBlackScore();
+                    //         std::cout << "Checkmate, white wins." << std::endl;
+                    //         return;
+                    //     }
+                    // } else if (isStalemate(true)){
+                    //         std::cout << "Stalemate." << std::endl;
+                    //         return;
+                    //     }
                 }
             }
             studio.render();

@@ -12,7 +12,10 @@ std::map<char, int> Board::columnLetterToNumber{
   {'h', 7}, {'H', 7}
 };
 
-Board::Board() {
+Board::Board(): 
+    whiteKingCoordinates{std::make_pair(7, 4)},
+    blackKingCoordinates{std::make_pair(0, 4)} 
+{
     createStartingBoard();
 };
 
@@ -106,9 +109,11 @@ void Board::setPiece(char pieceSymbol, int row, int col)
             chessBoard[row][col] = std::make_unique<Bishop>(true); 
             break;
         case 'k':
+            updateBlackKingCoordinates(row, col);
             chessBoard[row][col] = std::make_unique<King>(false); 
             break;
         case 'K':
+            updateWhiteKingCoordinates(row, col);
             chessBoard[row][col] = std::make_unique<King>(true); 
             break;
         case 'n':
@@ -209,63 +214,78 @@ bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, si
 
 };
 
-// bool Board::anyValidMoves(bool isWhitePlayer, size_t startRow, size_t startCol) {
-//     //Any valid Pawn moves?
-//         if (charAt(startRow, startCol) == 'p') {
-//             {
-//                 for (int numSteps = 1; numSteps <= 2; numSteps++) {
-//                 if (isValidMove(true, startRow, startCol, endRow + numSteps, startCol)) {
-//                     return true;
-//                 }
-//                 else return false;
-//                 }
-//             }
-//         }
-//         if (charAt(startRow, startCol) == 'P') {
-//             {
-//                 for (int numSteps = 1; numSteps <= 2; numSteps++) {
-//                 if (isValidMove(false, startRow, startCol, endRow - numSteps, startCol)) {
-//                     return true;
-//                 }
-//                 else return false;
-//                 }
-//             }
-//         }
 
-//     }
+void Board::updateWhiteKingCoordinates(int row, int col)
+{
+    whiteKingCoordinates.first = row;
+    whiteKingCoordinates.second = col;
+};
+
+void Board::updateBlackKingCoordinates(int row, int col)
+{
+    blackKingCoordinates.first = row;
+    blackKingCoordinates.second = col;
+};
 
 //check if the player is in check
-bool Board::isCheck()
+bool Board::isCheck(bool checkingWhiteKing)
 {
-    return true;
+    if (checkingWhiteKing){
+        for (size_t row = 0; row < BOARD_SIZE; row++){
+            for (size_t col = 0; col < BOARD_SIZE; col++){
+                if (charAt(row, col) == 'r' || charAt(row, col) == 'n' || charAt(row, col) == 'b' || charAt(row, col) == 'q' || charAt(row, col) == 'p' || charAt(row, col) == 'k') {
+                    if (isValidMove(false, row, col, whiteKingCoordinates.first, whiteKingCoordinates.second)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        //all black pieces have no valid move to the white king, so return false
+        return false;
+
+    } else if (!checkingWhiteKing){
+        for (size_t row = 0; row < BOARD_SIZE; row++) {
+            for (size_t col = 0; col < BOARD_SIZE; col++) {
+                if (charAt(row, col) == 'R' || charAt(row, col) == 'N' || charAt(row, col) == 'B' || charAt(row, col) == 'Q' || charAt(row, col) == 'P' || charAt(row, col) == 'K') {
+                    if (isValidMove(true, row, col, blackKingCoordinates.first, blackKingCoordinates.second)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        //all white pieces have no valid move to the black king, so return false
+        return false;
+    }
+    return false;
 };
 
-bool Board::isCheckmate()
+
+//first ensure that the king is currently in check
+//this check should be done outside this function, in game.cc
+
+//now the current player will try to perform every single legal move to get it out of check
+//if they can't make any legal moves that get it out of check,
+//it's a checkmate
+bool Board::isCheckmate(bool checkingWhite)
 {
-    // if(isCheck){
-    // //the fn below does not exist yet but anyValidMoves should check for all
-    // // possible moves minus all illegal moves for each piece
-    //     if(!anyValidMoves){
-    //         cout << ("Checkmate") << endl;
-    //         return true;
-    //     }
-    //     return false;
-    //     }
-    return true;
+    if (checkingWhite){
+        if (generateAllWhiteMoves().empty()) return true;
+    } else {
+        if (generateAllBlackMoves().empty()) return true;
+    }
+    return false;
 };
 
-bool Board::isStalemate()
+bool Board::isStalemate(bool checkingWhite)
 {
-    // if(!isCheck){
-    // //the fn below does not exist yet but anyValidMoves should check for all
-    // // possible moves minus all illegal moves for each piece
-    //     if(!anyValidMoves){
-    //         cout << ("Stalemate") << endl;
-    //         return true;
-    //     }
-    //     return false;
-    //     }
-    return true;
+    //first ensure that the king is currently NOT in check
+    //if they have no legal moves, it's a stalemate
+    if (checkingWhite){
+        if (generateAllWhiteMoves().empty()) return true;
+    } else {
+        if (generateAllBlackMoves().empty()) return true;
+    }
+    return false;
 };
 
 
@@ -317,4 +337,50 @@ std::pair<int, int> Board::notationToCoordinates(std::string notation){
   int row = BOARD_SIZE - (notation[1] - '0'); //do BOARD_SIZE - input since row is reversed
   int col = columnLetterToNumber[notation[0]];
   return std::make_pair(row, col);;
+};
+
+//startRow, startCol, endRow, endCol, isCapture, isCheck
+std::vector<std::tuple<int, int, int, int, bool, bool>> Board::generateAllWhiteMoves()
+{
+    //create new vector 
+    std::vector<std::tuple<int, int, int, int, bool, bool>> allWhiteMoves;
+
+    for (size_t row = 0; row < BOARD_SIZE; row++){
+        for (size_t col = 0; col < BOARD_SIZE; col++){
+            if (getPiece(row, col)->isWhite() && charAt(row, col) != ' '){ 
+                //if the piece is white and not blank
+                //get the list of moves for the current piece
+                std::vector<std::tuple<int, int, int, int, bool, bool>> moves;
+                moves = getPiece(row, col)->generateAllMoves(this, row, col);
+                
+                //append this list to the list of allWhiteMoves
+                for (size_t index = 0; index < moves.size(); index++){
+                    allWhiteMoves.emplace_back(moves[index]);
+                }
+            }
+        }
+    }
+    return allWhiteMoves;
+};
+std::vector<std::tuple<int, int, int, int, bool, bool>> Board::generateAllBlackMoves()
+{
+    //create new vector 
+    std::vector<std::tuple<int, int, int, int, bool, bool>> allBlackMoves;
+
+    for (size_t row = 0; row < BOARD_SIZE; row++){
+        for (size_t col = 0; col < BOARD_SIZE; col++){
+            if (!getPiece(row, col)->isWhite()){ 
+                //if the piece is black
+                //get the list of moves for the current piece
+                std::vector<std::tuple<int, int, int, int, bool, bool>> moves;
+                moves = getPiece(row, col)->generateAllMoves(this, row, col);
+                
+                //append this list to the list of all Black Moves
+                for (size_t index = 0; index < moves.size(); index++){
+                    allBlackMoves.emplace_back(moves[index]);
+                }
+            }
+        }
+    }
+    return allBlackMoves;
 };

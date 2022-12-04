@@ -41,4 +41,11 @@ bool Bishop::isValidMove(Board* board, int startRow, int startCol, int endRow, i
     return true;
 };
 
+//startRow, startCol, endRow, endCol, isCapture, isCheckOnEnemy
+std::vector<std::tuple<int, int, int, int, bool, bool>> Bishop::generateAllMoves(Board* board, int row, int col)
+{
+    std::vector<tuple<int, int, int, int, bool, bool>> moves;
+    return moves;
+};
+
 Bishop::~Bishop(){};

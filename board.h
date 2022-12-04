@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <tuple>
 #include <algorithm> 
 #include "Pieces/piece.h"
 #include "Pieces/bishop.h"
@@ -20,6 +21,8 @@ class Board {
   private: 
     std::vector<std::vector<std::unique_ptr<Piece>>> chessBoard;
     static std::map<char, int> columnLetterToNumber;
+    std::pair <int, int> whiteKingCoordinates;
+    std::pair <int, int> blackKingCoordinates;
 
   public:
     Board();
@@ -33,9 +36,12 @@ class Board {
     void makeMove(int startRow, int startCol, int endRow, int endCol);
     bool isValidCoordinate(size_t row, size_t col);
     bool isValidMove(bool isWhitePLayer, size_t startRow, size_t startCol, size_t endRow, size_t endCol);
-    bool isCheck();
-    bool isCheckmate();
-    bool isStalemate();
+
+    void updateWhiteKingCoordinates(int row, int col);
+    void updateBlackKingCoordinates(int row, int col);
+    bool isCheck(bool checkingWhiteKing);
+    bool isCheckmate(bool checkingWhite);
+    bool isStalemate(bool isCheckingWhite);
 
     //the following functions are for the setup mode
     bool hasOneWhiteKing();
@@ -43,6 +49,10 @@ class Board {
     bool hasNoPawnsFirstLastRow();
 
     static std::pair<int, int> notationToCoordinates(std::string notation);
+
+    //startRow, startCol, endRow, endCol, isCapture, isCheck
+    std::vector<std::tuple<int, int, int, int, bool, bool>> generateAllWhiteMoves();
+    std::vector<std::tuple<int, int, int, int, bool, bool>> generateAllBlackMoves();
 
 };
 

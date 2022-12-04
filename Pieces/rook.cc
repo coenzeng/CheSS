@@ -45,4 +45,12 @@ bool Rook::isValidMove(Board* board, int startRow, int startCol, int endRow, int
     return true;
 };
 
+
+//startRow, startCol, endRow, endCol, isCapture, isCheckOnEnemy
+std::vector<std::tuple<int, int, int, int, bool, bool>> Rook::generateAllMoves(Board* board, int row, int col)
+{
+    std::vector<std::tuple<int, int, int, int, bool, bool>> moves;
+    return moves;
+};
+
 Rook::~Rook(){};

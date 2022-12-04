@@ -11,4 +11,11 @@ bool BlankPiece::isValidMove(Board* board, int startRow, int startCol, int endRo
     return true;
 };
 
+//startRow, startCol, endRow, endCol, isCapture, isCheckOnEnemy
+std::vector<std::tuple<int, int, int, int, bool, bool>> BlankPiece::generateAllMoves(Board* board, int row, int col)
+{
+    std::vector<std::tuple<int, int, int, int, bool, bool>> moves;
+    return moves;
+};
+
 BlankPiece::~BlankPiece(){};
