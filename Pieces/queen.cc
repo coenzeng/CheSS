@@ -25,4 +25,11 @@ bool Queen::isValidMove(Board* board, int startRow, int startCol, int endRow, in
     return false;
 };
 
+//startRow, startCol, endRow, endCol, isCapture, isCheckOnEnemy
+std::vector<std::tuple<int, int, int, int, bool, bool>> Queen::generateAllMoves(Board* board, int row, int col)
+{
+    std::vector<std::tuple<int, int, int, int, bool, bool>> moves;
+    return moves;
+};
+
 Queen::~Queen(){};

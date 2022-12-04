@@ -21,4 +21,11 @@ bool Knight::isValidMove(Board* board, int startRow, int startCol, int endRow, i
     return false;
 };
 
+//startRow, startCol, endRow, endCol, isCapture, isCheckOnEnemy
+std::vector<std::tuple<int, int, int, int, bool, bool>> Knight::generateAllMoves(Board* board, int row, int col)
+{
+    std::vector<std::tuple<int, int, int, int, bool, bool>> moves;
+    return moves;
+};
+
 Knight::~Knight(){};

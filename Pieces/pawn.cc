@@ -81,6 +81,11 @@ bool Pawn::isValidMove(Board* board, int startRow, int startCol, int endRow, int
 
 };
 
-
+//startRow, startCol, endRow, endCol, isCapture, isCheckOnEnemy
+std::vector<std::tuple<int, int, int, int, bool, bool>> Pawn::generateAllMoves(Board* board, int row, int col)
+{
+    std::vector<std::tuple<int, int, int, int, bool, bool>> moves;
+    return moves;
+};
 
 Pawn::~Pawn(){};
