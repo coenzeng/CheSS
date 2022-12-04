@@ -166,51 +166,36 @@ bool Board::isValidCoordinate(size_t row, size_t col){
     return true;
 }
 
-//Board::isValidMove()
-// check all the conditions that are common for checking every valid move, which include:
-//1. Check that starting piece is the players piece
-//2. Check boundaries
-//3. Check that end piece is NOT the players piece (they can't kill themselves)
-//after all these conditions are checked, then check for individual piece moveablity
-
-bool Board::isValidMove(bool isWhitePlayer, size_t startRow, size_t startCol, size_t endRow, size_t endCol)
+//check that the move is in the movelist of all possible moves 
+//except that a player may NOT kill an opposing king
+bool Board::isValidMove(bool isWhitePlayer, int startRow, int startCol, int endRow, int endCol)
 {
-    //check boundaries 
-    if (!isValidCoordinate(startRow, startCol) || !isValidCoordinate(endRow, endCol))
-    {
-        return false;
-    };
-    //check if no move was made 
-    if (startRow == endRow && startCol == endCol)
-    {
-        return false;
+
+    if (isWhitePlayer){
+        for (size_t index = 0; index < allWhiteMoves.size(); index++){
+            int tempStartRow = std::get<0>(allWhiteMoves[index]);
+            int tempStartCol = std::get<1>(allWhiteMoves[index]);
+            int tempEndRow = std::get<2>(allWhiteMoves[index]);
+            int tempEndCol = std::get<3>(allWhiteMoves[index]);
+            
+            if (startRow == tempStartRow && startCol == tempStartCol && endRow == tempEndRow && endCol == tempEndCol && charAt(endRow, endCol) != 'k'){
+                return true;
+            }
+        }
+    } else {
+        for (size_t index = 0; index < allBlackMoves.size(); index++){
+            int tempStartRow = std::get<0>(allBlackMoves[index]);
+            int tempStartCol = std::get<1>(allBlackMoves[index]);
+            int tempEndRow = std::get<2>(allBlackMoves[index]);
+            int tempEndCol = std::get<3>(allBlackMoves[index]);
+            
+            if (startRow == tempStartRow && startCol == tempStartCol && endRow == tempEndRow && endCol == tempEndCol && charAt(endRow, endCol) != 'K'){
+                return true;
+            }
+        } 
     }
-    //check if the start piece is blank
-    if (charAt(startRow, startCol) == ' ')
-    {
-        return false;
-    }
-    //check if white player turn, but is trying to move black piece
-    if (isWhitePlayer && !getPiece(startRow, startCol)->isWhite())
-    {
-        return false;
-    }
-    //check if black player turn, but is trying to move white piece
-    if (!isWhitePlayer && getPiece(startRow, startCol)->isWhite())
-    {
-        return false;
-    }
-    //check if the player is trying to kill themselves
-    if (isWhitePlayer == getPiece(endRow, endCol)->isWhite() && charAt(endRow, endCol) != ' ')
-    {
-        return false;
-    } 
-    //check if the player is trying to kill a king
-    if (charAt(endRow, endCol) == 'K' || charAt(endRow, endCol) == 'k')
-    {
-        return false;
-    }
-    return getPiece(startRow, startCol)->isValidMove(this, startRow, startCol, endRow, endCol, isWhitePlayer);
+    //if the move is not in the movelist, return false
+    return false;
 
 };
 
@@ -231,26 +216,26 @@ void Board::updateBlackKingCoordinates(int row, int col)
 bool Board::isCheck(bool checkingWhiteKing)
 {
     if (checkingWhiteKing){
-        for (size_t row = 0; row < BOARD_SIZE; row++){
-            for (size_t col = 0; col < BOARD_SIZE; col++){
-                if (charAt(row, col) == 'r' || charAt(row, col) == 'n' || charAt(row, col) == 'b' || charAt(row, col) == 'q' || charAt(row, col) == 'p' || charAt(row, col) == 'k') {
-                    if (isValidMove(false, row, col, whiteKingCoordinates.first, whiteKingCoordinates.second)) {
-                        return true;
-                    }
-                }
+        for (size_t index = 0; index < allBlackMoves.size(); index++){
+            int endRow = std::get<2>(allBlackMoves[index]);
+            int endCol = std::get<3>(allBlackMoves[index]);
+            
+            //if the king is under attack, return true
+            if (charAt(endRow, endCol) == 'K'){
+                return true;
             }
         }
         //all black pieces have no valid move to the white king, so return false
         return false;
 
     } else if (!checkingWhiteKing){
-        for (size_t row = 0; row < BOARD_SIZE; row++) {
-            for (size_t col = 0; col < BOARD_SIZE; col++) {
-                if (charAt(row, col) == 'R' || charAt(row, col) == 'N' || charAt(row, col) == 'B' || charAt(row, col) == 'Q' || charAt(row, col) == 'P' || charAt(row, col) == 'K') {
-                    if (isValidMove(true, row, col, blackKingCoordinates.first, blackKingCoordinates.second)) {
-                        return true;
-                    }
-                }
+        for (size_t index = 0; index < allWhiteMoves.size(); index++){
+            int endRow = std::get<2>(allWhiteMoves[index]);
+            int endCol = std::get<3>(allWhiteMoves[index]);
+            
+            //if the king is under attack, return true
+            if (charAt(endRow, endCol) == 'k'){
+                return true;
             }
         }
         //all white pieces have no valid move to the black king, so return false
@@ -269,9 +254,9 @@ bool Board::isCheck(bool checkingWhiteKing)
 bool Board::isCheckmate(bool checkingWhite)
 {
     if (checkingWhite){
-        if (generateAllWhiteMoves().empty()) return true;
+        if (allWhiteMoves.empty()) return true;
     } else {
-        if (generateAllBlackMoves().empty()) return true;
+        if (allBlackMoves.empty()) return true;
     }
     return false;
 };
@@ -281,9 +266,9 @@ bool Board::isStalemate(bool checkingWhite)
     //first ensure that the king is currently NOT in check
     //if they have no legal moves, it's a stalemate
     if (checkingWhite){
-        if (generateAllWhiteMoves().empty()) return true;
+        if (allWhiteMoves.empty()) return true;
     } else {
-        if (generateAllBlackMoves().empty()) return true;
+        if (allBlackMoves.empty()) return true;
     }
     return false;
 };
@@ -343,7 +328,9 @@ std::pair<int, int> Board::notationToCoordinates(std::string notation){
 std::vector<std::tuple<int, int, int, int, bool, bool>> Board::generateAllWhiteMoves()
 {
     //create new vector 
-    std::vector<std::tuple<int, int, int, int, bool, bool>> allWhiteMoves;
+    if (!allWhiteMoves.empty()){
+        allWhiteMoves.clear();
+    }
 
     for (size_t row = 0; row < BOARD_SIZE; row++){
         for (size_t col = 0; col < BOARD_SIZE; col++){
@@ -365,7 +352,9 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Board::generateAllWhiteM
 std::vector<std::tuple<int, int, int, int, bool, bool>> Board::generateAllBlackMoves()
 {
     //create new vector 
-    std::vector<std::tuple<int, int, int, int, bool, bool>> allBlackMoves;
+    if(!allBlackMoves.empty()){
+        allBlackMoves.clear();
+    }
 
     for (size_t row = 0; row < BOARD_SIZE; row++){
         for (size_t col = 0; col < BOARD_SIZE; col++){

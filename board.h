@@ -23,6 +23,8 @@ class Board {
     static std::map<char, int> columnLetterToNumber;
     std::pair <int, int> whiteKingCoordinates;
     std::pair <int, int> blackKingCoordinates;
+    std::vector<std::tuple<int, int, int, int, bool, bool>> allWhiteMoves;
+    std::vector<std::tuple<int, int, int, int, bool, bool>> allBlackMoves;
 
   public:
     Board();
@@ -35,7 +37,7 @@ class Board {
     void unSetPiece(int row, int col); 
     void makeMove(int startRow, int startCol, int endRow, int endCol);
     bool isValidCoordinate(size_t row, size_t col);
-    bool isValidMove(bool isWhitePLayer, size_t startRow, size_t startCol, size_t endRow, size_t endCol);
+    bool isValidMove(bool isWhitePLayer, int startRow, int startCol, int endRow, int endCol);
 
     void updateWhiteKingCoordinates(int row, int col);
     void updateBlackKingCoordinates(int row, int col);

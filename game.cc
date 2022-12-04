@@ -42,7 +42,12 @@ void Game::startSetup()
             studio.render();
         } else if (command == "done") {
             //add conditions to leave 
-            if (board->hasOneWhiteKing() && board->hasOneBlackKing() && board->hasNoPawnsFirstLastRow()){ //also board-> isCheck()
+
+            //generate all moves to ensure that Kings are not in check 
+            board->generateAllWhiteMoves();
+            board->generateAllBlackMoves();
+            
+            if (board->hasOneWhiteKing() && board->hasOneBlackKing() && board->hasNoPawnsFirstLastRow() && !board->isCheck(true) && !board->isCheck(false)){
                 return;
             } else {
                 std::cout << "Conditions not satisfied to leave setup mode." << std::endl;
@@ -124,38 +129,40 @@ void Game::startGame(std::string player1, std::string player2)
                 if (whitePlayer->makeMove(board.get())){
                     currentPlayer = "black";
                     
-
                     //check win conditions
-                    // if isCheck(false){
+                    if (board->isCheck(false)){
+                        studio.render();
+                        std::cout << "Black is in check." << std::endl; 
 
-                    //     std::cout << "Black is in check." << std::endl; 
-                    //     if (isCheckmate(false)){
-                    //         incrementWhiteScore();
-                    //         std::cout << "Checkmate, white wins." << std::endl;
-                    //         return;
-                    //     } else if (isStalemate()){
-                    //         std::cout << "Stalemate." << std::endl;
-                    //         return;
-                    //     }
-                    // }
+                        if (board->isCheckmate(false)){
+                            incrementWhiteScore();
+                            std::cout << "Checkmate, white wins." << std::endl;
+                            return;
+                        } 
+                    } else if (board->isStalemate(false)){ //NOT in check
+                            std::cout << "Stalemate." << std::endl;
+                            return;
+                    }
+
                 }
             } else {
                 if (blackPlayer->makeMove(board.get())){
                     currentPlayer = "white";
 
                     //check win conditions
-                    // if isCheck(true){
+                    if (board->isCheck(true)){
+                        studio.render();
+                        std::cout << "White is in check." << std::endl; 
+                        if (board->isCheckmate(true)){
+                            incrementBlackScore();
+                            std::cout << "Checkmate, white wins." << std::endl;
+                            return;
+                        }
+                    } else if (board->isStalemate(true)){
+                            std::cout << "Stalemate." << std::endl;
+                            return;
+                    }
 
-                    //     std::cout << "White is in check." << std::endl; 
-                    //     if (isCheckmate(true)){
-                    //         incrementBlackScore();
-                    //         std::cout << "Checkmate, white wins." << std::endl;
-                    //         return;
-                    //     }
-                    // } else if (isStalemate(true)){
-                    //         std::cout << "Stalemate." << std::endl;
-                    //         return;
-                    //     }
                 }
             }
 
@@ -188,7 +195,7 @@ int Game::getBlackScore()
 //this function is for setup mode 
 //check if symbol is in the symbolList
 bool Game::isValidSymbol(char symbol){
-  std::vector<char> symbolList{'b', 'k', 'n', 'p', 'q', 'r', 'B', 'K', 'N', 'P', 'R'};
+  std::vector<char> symbolList{'b', 'k', 'n', 'p', 'q', 'r', 'B', 'K', 'N', 'P', 'Q', 'R'};
   for (size_t i = 0; i < symbolList.size(); i++){
     if (symbolList[i] == symbol){
         return true;
