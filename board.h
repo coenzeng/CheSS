@@ -23,6 +23,7 @@ class Board {
     static std::map<char, int> columnLetterToNumber;
     std::pair <int, int> whiteKingCoordinates;
     std::pair <int, int> blackKingCoordinates;
+    //startRow, startCol, endRow, endCol, isCapture, isCheck (updated in generateAllWhite/BlackMoves, used in isStalemate, isCheckmate, isCheck and isValidMove)
     std::vector<std::tuple<int, int, int, int, bool, bool>> allWhiteMoves;
     std::vector<std::tuple<int, int, int, int, bool, bool>> allBlackMoves;
 
@@ -52,9 +53,9 @@ class Board {
 
     static std::pair<int, int> notationToCoordinates(std::string notation);
 
-    //startRow, startCol, endRow, endCol, isCapture, isCheck
-    std::vector<std::tuple<int, int, int, int, bool, bool>> generateAllWhiteMoves();
-    std::vector<std::tuple<int, int, int, int, bool, bool>> generateAllBlackMoves();
+    
+    void generateAllWhiteMoves();
+    void generateAllBlackMoves();
 
 };
 

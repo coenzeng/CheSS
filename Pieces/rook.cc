@@ -45,11 +45,88 @@ bool Rook::isValidMove(Board* board, int startRow, int startCol, int endRow, int
     return true;
 };
 
+bool Rook::isOpponentPiece(Board* board, int endRow, int endCol){
+    if (endRow > 7 || endRow < 0 || endCol > 7 || endCol < 0){
+        return false;
+    }
+    if (board->getPiece(endRow, endCol)->isWhite() != this->isWhite() && board->getPiece(endRow, endCol)->charAt(endRow, endCol) != ' '){
+        return true; // opponent piece
+    }
+    return false; // could be your own piece, or a blank piece 
+}
+
+bool Rook::isOwnPiece(Board* board, int endRow, int endCol){
+    if (endRow > 7 || endRow < 0 || endCol > 7 || endCol < 0){
+        return false;
+    }
+    if (board->getPiece(endRow, endCol)->isWhite() == this->isWhite() && board->getPiece(endRow, endCol)->charAt(endRow, endCol) != ' '){
+        return true; // your own piece
+    }
+    return false; // opponent's or blank piece
+}
 
 //startRow, startCol, endRow, endCol, isCapture, isCheckOnEnemy
 std::vector<std::tuple<int, int, int, int, bool, bool>> Rook::generateAllMoves(Board* board, int row, int col)
 {
     std::vector<std::tuple<int, int, int, int, bool, bool>> moves;
+    std::tuple<int, int, int, int, bool, bool> move;
+
+    // up
+    for(int i = row - 1; i >= 0; i--){
+        // encountering player's own piece
+        if (isOwnPiece(board, i, col)){
+            break;
+        }
+        move = std::make_tuple(row, col, i, col, false, false);
+        moves.emplace_back(move);
+        // encountering opponent's piece (add position and break)
+        if (isOpponentPiece(board, i, col)){
+            break;
+        }
+    }
+
+    // down
+    for(int i = row + 1; i < 8; i++){
+        // encountering player's own piece
+        if (isOwnPiece(board, i, col)){
+            break;
+        }
+        move = std::make_tuple(row, col, i, col, false, false);
+        moves.emplace_back(move);
+        // encountering opponent's piece (add position and break)
+        if (isOpponentPiece(board, i, col)){
+            break;
+        }
+    }
+
+    // left
+    for(int i = col - 1; i >= 0; i--){
+        // encountering player's own piece
+        if (isOwnPiece(board, row, i)){
+            break;
+        }
+        move = std::make_tuple(row, col, row, i, false, false);
+        moves.emplace_back(move);
+        // encountering opponent's piece (add position and break)
+        if (isOpponentPiece(board, row, i)){
+            break;
+        }
+    }
+
+    // right
+    for(int i = col + 1; i <= 7; i++){
+        // encountering player's own piece
+        if (isOwnPiece(board, row, i)){
+            break;
+        }
+        move = std::make_tuple(row, col, row, i, false, false);
+        moves.emplace_back(move);
+        // encountering opponent's piece (add position and break)
+        if (isOpponentPiece(board, row, i)){
+            break;
+        }
+    }
+    
     return moves;
 };
 

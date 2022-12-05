@@ -91,7 +91,12 @@ void Board::createEmptyBoard()
 //why? You should always use a raw pointer if you're not modifying ownership.
 Piece* Board::getPiece(int row, int col)
 {
-    return chessBoard[row][col].get();
+    if(row >= 0 && row <= 7 && col >= 0 && col <= 7){
+        return chessBoard[row][col].get();
+    }else{
+        return nullptr;
+    }
+    
 };
 
 char Board::charAt(int row, int col)
@@ -154,7 +159,8 @@ void Board::unSetPiece(int row, int col)
 
 void Board::makeMove(int startRow, int startCol, int endRow, int endCol)
 {
-    std::cout << "("<<8 - startCol<<", "<<startRow<<") to ("<<8 - endCol<<", "<<endRow<<")"<<std::endl;
+    std::cout<<"Given move: (startRow, startCol) to (endRow, endCol)"<<std::endl;
+    std::cout << "("<<startRow<<", "<<startCol<<") to ("<<endRow<<", "<<endCol<<")"<<std::endl;
     setPiece(charAt(startRow, startCol), endRow, endCol); 
     unSetPiece(startRow, startCol); 
 };
@@ -324,14 +330,12 @@ std::pair<int, int> Board::notationToCoordinates(std::string notation){
   return std::make_pair(row, col);;
 };
 
-//startRow, startCol, endRow, endCol, isCapture, isCheck
-std::vector<std::tuple<int, int, int, int, bool, bool>> Board::generateAllWhiteMoves()
+void Board::generateAllWhiteMoves()
 {
     //create new vector 
     if (!allWhiteMoves.empty()){
         allWhiteMoves.clear();
     }
-
     for (size_t row = 0; row < BOARD_SIZE; row++){
         for (size_t col = 0; col < BOARD_SIZE; col++){
             if (getPiece(row, col)->isWhite() && charAt(row, col) != ' '){ 
@@ -339,7 +343,6 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Board::generateAllWhiteM
                 //get the list of moves for the current piece
                 std::vector<std::tuple<int, int, int, int, bool, bool>> moves;
                 moves = getPiece(row, col)->generateAllMoves(this, row, col);
-                
                 //append this list to the list of allWhiteMoves
                 for (size_t index = 0; index < moves.size(); index++){
                     allWhiteMoves.emplace_back(moves[index]);
@@ -347,9 +350,8 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Board::generateAllWhiteM
             }
         }
     }
-    return allWhiteMoves;
 };
-std::vector<std::tuple<int, int, int, int, bool, bool>> Board::generateAllBlackMoves()
+void Board::generateAllBlackMoves()
 {
     //create new vector 
     if(!allBlackMoves.empty()){
@@ -371,5 +373,4 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Board::generateAllBlackM
             }
         }
     }
-    return allBlackMoves;
 };

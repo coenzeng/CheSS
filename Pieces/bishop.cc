@@ -41,10 +41,106 @@ bool Bishop::isValidMove(Board* board, int startRow, int startCol, int endRow, i
     return true;
 };
 
+bool Bishop::isOpponentPiece(Board* board, int endRow, int endCol){
+    if (endRow > 7 || endRow < 0 || endCol > 7 || endCol < 0){
+        return false;
+    }
+    if (board->getPiece(endRow, endCol)->isWhite() != this->isWhite() && board->getPiece(endRow, endCol)->charAt(endRow, endCol) != ' '){
+        return true;
+    }
+    return false;
+}
+
+bool Bishop::isOwnPiece(Board* board, int endRow, int endCol){
+    if (endRow > 7 || endRow < 0 || endCol > 7 || endCol < 0){
+        return false;
+    }
+    if (board->getPiece(endRow, endCol)->isWhite() == this->isWhite() && board->getPiece(endRow, endCol)->charAt(endRow, endCol) != ' '){
+        return true;
+    }
+    return false;
+}
+
 //startRow, startCol, endRow, endCol, isCapture, isCheckOnEnemy
 std::vector<std::tuple<int, int, int, int, bool, bool>> Bishop::generateAllMoves(Board* board, int row, int col)
 {
     std::vector<tuple<int, int, int, int, bool, bool>> moves;
+    std::tuple<int, int, int, int, bool, bool> move;
+    int curCol = 0;
+    int curRow = 0;
+
+    // top right diag
+    curCol = col + 1;
+    curRow = row - 1;
+    while(curCol < 8 && curCol >= 0 && curRow >= 0 && curRow < 8){
+        // encountering player's own piece
+        if (isOwnPiece(board, curRow, curCol)){
+            break;
+        }
+        move = std::make_tuple(row, col, curRow, curCol, false, false);
+        moves.emplace_back(move);
+        // encountering opponent's piece (add position and break)
+        if (isOpponentPiece(board, curRow, curCol)){
+            break;
+        }
+        curCol++;
+        curRow--;
+    }
+
+    // top left diag
+    curCol = col - 1;
+    curRow = row - 1;
+    while(curCol < 8 && curCol >= 0 && curRow >= 0 && curRow < 8){
+        // encountering player's own piece
+        if (isOwnPiece(board, curRow, curCol)){
+            break;
+        }
+        move = std::make_tuple(row, col, curRow, curCol, false, false);
+        moves.emplace_back(move);
+        // encountering opponent's piece (add position and break)
+        if (isOpponentPiece(board, curRow, curCol)){
+            break;
+        }
+        curCol--;
+        curRow--;
+    }
+
+    // bottom left diag
+    curCol = col - 1;
+    curRow = row + 1;
+    while(curCol < 8 && curCol >= 0 && curRow >= 0 && curRow < 8){
+        // encountering player's own piece
+        if (isOwnPiece(board, curRow, curCol)){
+            break;
+        }
+        move = std::make_tuple(row, col, curRow, curCol, false, false);
+        moves.emplace_back(move);
+        // encountering opponent's piece (add position and break)
+        if (isOpponentPiece(board, curRow, curCol)){
+            break;
+        }
+        curCol--;
+        curRow++;
+    }
+
+    // bottom right diag
+    curCol = col + 1;
+    curRow = row + 1;
+    while(curCol < 8 && curCol >= 0 && curRow >= 0 && curRow < 8){
+        // encountering player's own piece
+        if (isOwnPiece(board, curRow, curCol)){
+            break;
+        }
+        move = std::make_tuple(row, col, curRow, curCol, false, false);
+        moves.emplace_back(move);
+        // encountering opponent's piece (add position and break)
+        if (isOpponentPiece(board, curRow, curCol)){
+            break;
+        }
+        curCol++;
+        curRow++;
+    }
+    
     return moves;
 };
 
