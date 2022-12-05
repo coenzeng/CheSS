@@ -109,9 +109,6 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> King::generateAllMoves(B
         moves.emplace_back(move);
     }
 
-    std::cout<<"All of king's moves: "<<std::endl;
-    debugPrintAllMoves(moves);
-
     return moves;
 };
 

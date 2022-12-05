@@ -107,7 +107,6 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Pawn::generateAllMoves(B
     std::tuple<int, int, int, int, bool, bool> move;
     if(board->getPiece(row, col)->isWhite() && board->charAt(row, col) != ' '){
         // current piece is white
-
         // condition 1
         if(board->getPiece(row - 1, col) && board->getPiece(row - 1, col)->charAt(row - 1, col) == ' '){
             move = std::make_tuple(row, col, row - 1, col, false, false);
@@ -128,10 +127,33 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Pawn::generateAllMoves(B
             move = std::make_tuple(row, col, row - 1, col + 1, true, false);
             moves.emplace_back(move);
         }
+
+        // Checking and adding valid moves for En Passant
+        int prevStartRow = std::get<0>(board->previousMove);
+        int prevEndRow = std::get<2>(board->previousMove);
+        int prevEndCol = std::get<3>(board->previousMove);
+
+        // check for black pawn to the left
+        if(isValidCoordinates(row, col - 1) && board->charAt(row, col - 1) == 'p'){
+            // check if previous move has same final location as opponent pawn and if previous pawn moved two squares
+            if(prevEndRow == row && prevEndCol == (col - 1) && prevStartRow == 1 && prevEndRow == 3){
+                std::cout<<"Inside enpassant condition 1 in pawn.cc"<<std::endl;
+                move = std::make_tuple(row, col, row - 1, col - 1, true, false);
+                moves.emplace_back(move);
+                board->isEnPassant = true;
+            }
+        // check for black pawn to the right
+        }else if(isValidCoordinates(row, col + 1) && board->charAt(row, col + 1) == 'p'){
+            if(prevEndRow == row && prevEndCol == (col + 1) && prevStartRow == 1 && prevEndRow == 3){
+                std::cout<<"Inside enpassant condition 2 in pawn.cc"<<std::endl;
+                move = std::make_tuple(row, col, row - 1, col + 1, true, false);
+                moves.emplace_back(move);
+                board->isEnPassant = true;
+            }
+        }
         
     }else{
         // current piece is black
-
         // condition 1
         if(board->getPiece(row + 1, col) && board->getPiece(row + 1, col)->charAt(row + 1, col) == ' '){
             move = std::make_tuple(row, col, row + 1, col, false, false);
@@ -153,10 +175,32 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Pawn::generateAllMoves(B
             moves.emplace_back(move);
         }
 
+        // Checking and adding valid moves for En Passant
+        int prevStartRow = std::get<0>(board->previousMove);
+        int prevEndRow = std::get<2>(board->previousMove);
+        int prevEndCol = std::get<3>(board->previousMove);
+
+        // check for white pawn to the left
+        if(isValidCoordinates(row, col - 1) && board->charAt(row, col - 1) == 'P'){
+            // check if previous move has same final location as opponent pawn and if previous pawn moved two squares
+            if(prevEndRow == row && prevEndCol == (col - 1) && prevStartRow == 6 && prevEndRow == 4){
+                std::cout<<"Inside enpassant condition 3 in pawn.cc"<<std::endl;
+                move = std::make_tuple(row, col, row + 1, col - 1, true, false);
+                moves.emplace_back(move);
+                board->isEnPassant = true;
+            }
+        // check for black pawn to the right
+        }else if(isValidCoordinates(row, col + 1) && board->charAt(row, col + 1) == 'P'){
+            if(prevEndRow == row && prevEndCol == (col + 1) && prevStartRow == 6 && prevEndRow == 4){
+                std::cout<<"Inside enpassant condition 4 in pawn.cc"<<std::endl;
+                move = std::make_tuple(row, col, row + 1, col + 1, true, false);
+                moves.emplace_back(move);
+                board->isEnPassant = true;
+            }
+        }
     }
     // std::cout<<"All of pawns moves: "<<std::endl;
     // debugPrintAllMoves(moves);
-    
     
     return moves;
 };
