@@ -134,7 +134,7 @@ void Game::startGame(std::string player1, std::string player2)
                 // allWhiteMoves cleared and regenerated in each turn
                 board->generateAllWhiteMoves();
                 board->generateAllBlackMoves();
-                std::cout<<"sucessfully generated all moves"<<std::endl;
+            
                 if (whitePlayer->makeMove(board.get())){
                     currentPlayer = "black";
                     //check win conditions

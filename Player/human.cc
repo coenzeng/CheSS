@@ -23,7 +23,18 @@ bool Human::makeMove(Board * board)
     //std::cout << board->isValidMove(isWhite, startRow, startCol, endRow, endCol) << std::endl;
 
     if (board->isValidMove(isWhite, startRow, startCol, endRow, endCol)){
-        board->makeMove(startRow, startCol, endRow, endCol);
+        //check if move is a pawn promotion
+        //if yes, take in extra input 
+        
+        if (board->isPawnPromotion(startRow, startCol, endRow, endCol)){
+            char piece;
+            std::cin >> piece;
+            //returns a boolean if promotion was successful
+            return board->promoteThePawn(piece, startRow, startCol, endRow, endCol);
+
+        } else {
+            board->makeMove(startRow, startCol, endRow, endCol);
+        }
         return true;
     }
     return false;

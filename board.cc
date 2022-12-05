@@ -168,6 +168,32 @@ bool Board::isValidCoordinate(size_t row, size_t col){
     return true;
 }
 
+
+bool Board::willPutCurrentPlayerInCheck(bool isWhitePlayer, int startRow, int startCol, int endRow, int endCol){
+
+    //remember the current configuration of the board 
+    char startPieceSymbol = charAt(startRow, startCol);
+    char endPieceSymbol = charAt(endRow, endCol);
+
+    //make a temporary move to see if the current player gets into check
+    makeMove(startRow, startCol, endRow, endCol);
+
+    //generate all moves of the opposing player
+    if (isWhitePlayer){
+        generateAllBlackMoves();
+    } else {
+        generateAllWhiteMoves();
+    }
+
+    //if the current is in check, UNDO the move
+    if (isCheck(isWhitePlayer)){
+        setPiece(startPieceSymbol, startRow, startCol);
+        setPiece(endPieceSymbol, endRow, endCol);
+        return true;
+    }
+
+    return false;
+}
 //check that the move is in the movelist of all possible moves 
 //except that a player may NOT kill an opposing king
 bool Board::isValidMove(bool isWhitePlayer, int startRow, int startCol, int endRow, int endCol)
@@ -408,3 +434,36 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Board::getAllLegalWhiteM
 std::vector<std::tuple<int, int, int, int, bool, bool>> Board::getAllLegalBlackMoves(){
     return allLegalBlackMoves;
 }
+
+bool Board::isPawnPromotion(int startRow, int startCol, int endRow, int endCol){
+    //check if promote white Pawn
+    //endRow == 0 means top row of the board
+    if (charAt(startRow, startCol) == 'P' && endRow == 0){
+        return true;
+
+    //check if promote black pawn 
+    //endRow == BOARD_SIZE means bottom row of the board
+    } else if (charAt(startRow, startCol) == 'p' && endRow == (BOARD_SIZE - 1)){
+        return true;
+    }
+    return false;
+}
+
+bool Board::promoteThePawn(char symbol, int startRow, int startCol, int endRow, int endCol)
+{
+    //promoting a WHITE pawn
+    if (charAt(startRow, startCol) == 'P' && (symbol == 'Q' || symbol == 'R' || symbol == 'B' || symbol == 'N')){
+        unSetPiece(startRow, startCol);
+        setPiece(symbol, endRow, endCol);
+        return true;
+    
+    //promoting a BLACK pawn
+    } else if (charAt(startRow, startCol) == 'p' && (symbol == 'q' || symbol == 'r' || symbol == 'b' || symbol == 'n')){
+        unSetPiece(startRow, startCol);
+        setPiece(symbol, endRow, endCol);
+        return true;
+    }
+
+    //if the symbol is not valid, return false
+    return false;
+};
