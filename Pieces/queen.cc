@@ -28,8 +28,23 @@ bool Queen::isValidMove(Board* board, int startRow, int startCol, int endRow, in
 //startRow, startCol, endRow, endCol, isCapture, isCheckOnEnemy
 std::vector<std::tuple<int, int, int, int, bool, bool>> Queen::generateAllMoves(Board* board, int row, int col)
 {
-    std::vector<std::tuple<int, int, int, int, bool, bool>> moves;
-    return moves;
+    std::vector<std::tuple<int, int, int, int, bool, bool>> movesQueen;
+    std::vector<std::tuple<int, int, int, int, bool, bool>> movesRook;
+    std::vector<std::tuple<int, int, int, int, bool, bool>> movesBishop;
+
+    Rook tempRook{isWhitePiece};
+    Bishop tempBishop{isWhitePiece};
+
+    movesRook = tempRook.generateAllMoves(board, row, col);
+    movesBishop = tempBishop.generateAllMoves(board, row, col);
+
+    for (size_t index = 0; index < movesRook.size(); index++){
+        movesQueen.emplace_back(movesRook[index]);
+    }
+    for (size_t index = 0; index < movesBishop.size(); index++){
+        movesQueen.emplace_back(movesBishop[index]);
+    }
+    return movesQueen;
 };
 
 Queen::~Queen(){};
