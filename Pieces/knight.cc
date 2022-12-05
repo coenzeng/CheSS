@@ -110,8 +110,6 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Knight::generateAllMoves
         moves.emplace_back(move);
 
     }
-    std::cout<<"All of knight's moves: "<<std::endl;
-    debugPrintAllMoves(moves);
 
     return moves;
 };

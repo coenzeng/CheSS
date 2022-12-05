@@ -68,6 +68,8 @@ void Board::createStartingBoard()
     chessBoard[7].push_back(std::make_unique<Knight>(true));
     chessBoard[7].push_back(std::make_unique<Rook>(true));
 
+    previousMove = std::make_tuple(0, 0, 0, 0, false, false);
+    isEnPassant = false;
 };
 
 void Board::createEmptyBoard()
@@ -157,8 +159,33 @@ void Board::makeMove(int startRow, int startCol, int endRow, int endCol)
 {
     std::cout<<"Given move: (startRow, startCol) to (endRow, endCol)"<<std::endl;
     std::cout << "("<<startRow<<", "<<startCol<<") to ("<<endRow<<", "<<endCol<<")"<<std::endl;
+
+    int prevStartRow = std::get<0>(this->previousMove);
+    int prevStartCol = std::get<1>(this->previousMove);
+    int prevEndRow = std::get<2>(this->previousMove);
+    int prevEndCol = std::get<3>(this->previousMove);
+    std::cout<<"Previous move: (startRow, startCol) to (endRow, endCol)"<<std::endl;
+    std::cout << "("<<prevStartRow<<", "<<prevStartCol<<") to ("<<prevEndRow<<", "<<prevEndCol<<")"<<std::endl;
+
+    if(isEnPassant){
+        // check if the player used the en passant move
+        if(getPiece(startRow, startCol)->charAt(startRow, startCol) == 'p'){ // if player is black
+            if (charAt(endRow, endCol) == ' ' && abs(startRow - endRow) == 1 && abs(startCol - endCol) == 1){
+                std::cout<<"second insdie if staement"<<std::endl;
+                unSetPiece(endRow - 1, endCol);
+            }
+        }else if(getPiece(startRow, startCol)->charAt(startRow, startCol) == 'P'){ // if player is white
+            if (charAt(endRow, endCol) == ' ' && abs(startRow - endRow) == 1 && abs(startCol - endCol) == 1){
+                std::cout<<"2 second insdie if statement"<<std::endl;
+                unSetPiece(endRow + 1, endCol);
+            }
+        }
+    }
     setPiece(charAt(startRow, startCol), endRow, endCol); 
-    unSetPiece(startRow, startCol); 
+    unSetPiece(startRow, startCol);
+
+    previousMove = std::make_tuple(startRow, startCol, endRow, endCol, false, false);
+    isEnPassant = false; // new turn, EnPassant has to be initialized to false
 };
 
 bool Board::isValidCoordinate(size_t row, size_t col){

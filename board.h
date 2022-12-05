@@ -35,6 +35,11 @@ class Board {
     std::vector<std::tuple<int, int, int, int, bool, bool>> allLegalBlackMoves;
 
   public:
+    //set in board::makeMove(), used in Pawn::generateAllMoves()
+    //startRow, startCol, endRow, endCol, isCapture, isCheck
+    std::tuple<int, int, int, int, bool, bool> previousMove;
+    // set in Pawn::generateAllMoves(), used in board::makeMove()
+    bool isEnPassant;
     Board();
     ~Board();
     Piece* getPiece(int row, int col);
@@ -59,7 +64,6 @@ class Board {
     bool hasNoPawnsFirstLastRow();
 
     static std::pair<int, int> notationToCoordinates(std::string notation);
-
 
     //setter functions for all valid moves
     void generateAllWhiteMoves();

@@ -10,6 +10,10 @@ bool Piece::isWhite()
     return isWhitePiece;
 };
 
+bool Piece::isValidCoordinates(int row, int col){
+    return (row >=0 && row <= 7 && col >= 0 && col <= 7);
+}
+
 bool Piece::isValidPrelim(Board* board, int endRow, int endCol, bool isWhitePlayer){
     // check for out of bounds and moving into a your own piece
     if(endRow < 0 || endRow > 7 || endCol < 0 || endCol > 7 || ((board->getPiece(endRow, endCol)->isWhite() == isWhitePlayer) && board->getPiece(endRow, endCol)->charAt(endRow, endCol) != ' ')){
