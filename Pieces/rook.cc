@@ -70,18 +70,20 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Rook::generateAllMoves(B
 {
     std::vector<std::tuple<int, int, int, int, bool, bool>> moves;
     std::tuple<int, int, int, int, bool, bool> move;
-
     // up
     for(int i = row - 1; i >= 0; i--){
         // encountering player's own piece
         if (isOwnPiece(board, i, col)){
             break;
         }
-        move = std::make_tuple(row, col, i, col, false, false);
-        moves.emplace_back(move);
         // encountering opponent's piece (add position and break)
-        if (isOpponentPiece(board, i, col)){
+        if (isOpponentPiece(board, row, i)){
+            move = std::make_tuple(row, col, row, i, true, false);
+            moves.emplace_back(move);
             break;
+        } else {
+            move = std::make_tuple(row, col, row, i, false, false);
+            moves.emplace_back(move);
         }
     }
 
@@ -91,11 +93,14 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Rook::generateAllMoves(B
         if (isOwnPiece(board, i, col)){
             break;
         }
-        move = std::make_tuple(row, col, i, col, false, false);
-        moves.emplace_back(move);
         // encountering opponent's piece (add position and break)
-        if (isOpponentPiece(board, i, col)){
+        if (isOpponentPiece(board, row, i)){
+            move = std::make_tuple(row, col, row, i, true, false);
+            moves.emplace_back(move);
             break;
+        } else {
+            move = std::make_tuple(row, col, row, i, false, false);
+            moves.emplace_back(move);
         }
     }
 
@@ -105,11 +110,14 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Rook::generateAllMoves(B
         if (isOwnPiece(board, row, i)){
             break;
         }
-        move = std::make_tuple(row, col, row, i, false, false);
-        moves.emplace_back(move);
         // encountering opponent's piece (add position and break)
         if (isOpponentPiece(board, row, i)){
+            move = std::make_tuple(row, col, row, i, true, false);
+            moves.emplace_back(move);
             break;
+        } else {
+            move = std::make_tuple(row, col, row, i, false, false);
+            moves.emplace_back(move);
         }
     }
 
@@ -119,11 +127,14 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Rook::generateAllMoves(B
         if (isOwnPiece(board, row, i)){
             break;
         }
-        move = std::make_tuple(row, col, row, i, false, false);
-        moves.emplace_back(move);
         // encountering opponent's piece (add position and break)
         if (isOpponentPiece(board, row, i)){
+            move = std::make_tuple(row, col, row, i, true, false);
+            moves.emplace_back(move);
             break;
+        } else {
+            move = std::make_tuple(row, col, row, i, false, false);
+            moves.emplace_back(move);
         }
     }
     

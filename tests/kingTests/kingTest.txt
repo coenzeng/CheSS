@@ -1,0 +1,4 @@
+setup 
++ K c2
++ k c1
+done

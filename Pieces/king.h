@@ -9,6 +9,7 @@ class King: public Piece {
         ~King();
         char charAt(int row, int col);
         bool isValidMove(Board* board, int startRow, int startCol, int endRow, int endCol, bool isWhitePlayer); // need to remove
+        bool isOpponentPiece(Board* board, int endRow, int endCol);
         std::vector<std::tuple<int, int, int, int, bool, bool>> generateAllMoves(Board* board, int row, int col);
 };
 
