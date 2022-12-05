@@ -1,0 +1,9 @@
+setup 
++ K a3
++ k c1
++ P d2
++ p c4
+done
+game human human
+move d2 d4
+move c4 d3

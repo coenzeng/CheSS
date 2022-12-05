@@ -152,7 +152,7 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Bishop::generateAllMoves
         curCol++;
         curRow++;
     }
-    
+
     return moves;
 };
 
