@@ -24,7 +24,19 @@ bool Computer2::makeMove(Board * board)
             startCol = std::get<1>(moves[index]);
             endRow = std::get<2>(moves[index]);
             endCol = std::get<3>(moves[index]);
-            board->makeMove(startRow, startCol, endRow, endCol);
+            if (board->isPawnPromotion(startRow, startCol, endRow, endCol)){
+        
+                //pawn promotion is guarenteed to be successful, will always return true 
+                if (isWhite){
+                    return board->promoteThePawn('Q', startRow, startCol, endRow, endCol);
+                } else {
+                    return board->promoteThePawn('q', startRow, startCol, endRow, endCol);
+                }
+
+            } else {
+                board->makeMove(startRow, startCol, endRow, endCol);
+            }
+            
             return true;
         };
     }
@@ -38,6 +50,17 @@ bool Computer2::makeMove(Board * board)
     endRow = std::get<2>(moves[randomIndex]);
     endCol = std::get<3>(moves[randomIndex]);
 
-    board->makeMove(startRow, startCol, endRow, endCol);
+    if (board->isPawnPromotion(startRow, startCol, endRow, endCol)){
+        
+        //pawn promotion is guarenteed to be successful, will always return true 
+        if (isWhite){
+            return board->promoteThePawn('Q', startRow, startCol, endRow, endCol);
+        } else {
+            return board->promoteThePawn('q', startRow, startCol, endRow, endCol);
+        }
+
+    } else {
+        board->makeMove(startRow, startCol, endRow, endCol);
+    }
     return true;
 };

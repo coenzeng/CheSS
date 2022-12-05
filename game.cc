@@ -131,7 +131,6 @@ void Game::startGame(std::string player1, std::string player2)
             board->generateAllBlackMoves();
 
             if (currentPlayer == "white"){
-                
                 if (whitePlayer->makeMove(board.get())){
                     currentPlayer = "black";
                     //check win conditions

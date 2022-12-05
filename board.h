@@ -50,10 +50,10 @@ class Board {
     void unSetPiece(int row, int col); 
     void makeMove(int startRow, int startCol, int endRow, int endCol);
     bool isValidCoordinate(size_t row, size_t col);
+
+    bool willPutCurrentPlayerInCheck(bool isWhitePlayer, int startRow, int startCol, int endRow, int endCol);
     bool isValidMove(bool isWhitePLayer, int startRow, int startCol, int endRow, int endCol);
 
-    void updateWhiteKingCoordinates(int row, int col);
-    void updateBlackKingCoordinates(int row, int col);
     bool isCheck(bool checkingWhiteKing);
     bool isCheckmate(bool checkingWhite);
     bool isStalemate(bool isCheckingWhite);
@@ -72,6 +72,9 @@ class Board {
     //getter functions for all valid moves
     std::vector<std::tuple<int, int, int, int, bool, bool>> getAllLegalWhiteMoves();
     std::vector<std::tuple<int, int, int, int, bool, bool>> getAllLegalBlackMoves();
+
+    bool isPawnPromotion(int startRow, int startCol, int endRow, int endCol);
+    bool promoteThePawn(char symbol, int startRow, int startCol, int endRow, int endCol);
 
 };
 
