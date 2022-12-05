@@ -124,7 +124,12 @@ void Game::startGame(std::string player1, std::string player2)
             return;
         } else if (command == "move") {
 
-            //if a move is made, switch the players turn and check win conditions
+            //if a move is made, switch the players turn
+            //check win conditions after a successful move
+            //it is never possible for a player to start their turn with no legal moves 
+            board->generateAllWhiteMoves();
+            board->generateAllBlackMoves();
+
             if (currentPlayer == "white"){
                 // allWhiteMoves cleared and regenerated in each turn
                 board->generateAllWhiteMoves();
@@ -132,7 +137,6 @@ void Game::startGame(std::string player1, std::string player2)
                 std::cout<<"sucessfully generated all moves"<<std::endl;
                 if (whitePlayer->makeMove(board.get())){
                     currentPlayer = "black";
-                    
                     //check win conditions
                     if (board->isCheck(false)){
                         studio.render();
@@ -147,7 +151,6 @@ void Game::startGame(std::string player1, std::string player2)
                             std::cout << "Stalemate." << std::endl;
                             return;
                     }
-
                 }
             } else {
                 board->generateAllBlackMoves();
@@ -171,7 +174,8 @@ void Game::startGame(std::string player1, std::string player2)
 
                 }
             }
-            studio.render();
+
+            
         }
 
     }
