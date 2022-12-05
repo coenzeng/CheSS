@@ -356,7 +356,6 @@ void Board::generateAllWhiteMoves()
             }
         }
     }
-
     return;
 };
 

@@ -1,0 +1,5 @@
+setup 
++ K a1 
++ k c1
++ R c6
+done

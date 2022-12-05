@@ -2,7 +2,7 @@
 #include "rook.h"
 #include "bishop.h"
 #include <cmath>
-
+#include "../board.h"
 Queen::Queen(bool isWhitePiece): Piece(isWhitePiece){};  
 
 char Queen::charAt(int row, int col)
@@ -24,6 +24,16 @@ bool Queen::isValidMove(Board* board, int startRow, int startCol, int endRow, in
 
     return false;
 };
+
+bool Queen::isOpponentPiece(Board* board, int endRow, int endCol){
+    if (endRow > 7 || endRow < 0 || endCol > 7 || endCol < 0){
+        return false;
+    }
+    if (board->getPiece(endRow, endCol)->isWhite() != this->isWhite() && board->getPiece(endRow, endCol)->charAt(endRow, endCol) != ' '){
+        return true;
+    }
+    return false;
+}
 
 //startRow, startCol, endRow, endCol, isCapture, isCheckOnEnemy
 std::vector<std::tuple<int, int, int, int, bool, bool>> Queen::generateAllMoves(Board* board, int row, int col)

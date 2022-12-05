@@ -1,0 +1,5 @@
+setup 
++ K b3
++ k e5
++ P f4
+done

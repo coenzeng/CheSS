@@ -77,11 +77,14 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Bishop::generateAllMoves
         if (isOwnPiece(board, curRow, curCol)){
             break;
         }
-        move = std::make_tuple(row, col, curRow, curCol, false, false);
-        moves.emplace_back(move);
         // encountering opponent's piece (add position and break)
         if (isOpponentPiece(board, curRow, curCol)){
+            move = std::make_tuple(row, col, curRow, curCol, true, false);
+            moves.emplace_back(move);
             break;
+        } else {
+            move = std::make_tuple(row, col, curRow, curCol, false, false);
+            moves.emplace_back(move);
         }
         curCol++;
         curRow--;
@@ -95,11 +98,14 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Bishop::generateAllMoves
         if (isOwnPiece(board, curRow, curCol)){
             break;
         }
-        move = std::make_tuple(row, col, curRow, curCol, false, false);
-        moves.emplace_back(move);
         // encountering opponent's piece (add position and break)
         if (isOpponentPiece(board, curRow, curCol)){
+            move = std::make_tuple(row, col, curRow, curCol, true, false);
+            moves.emplace_back(move);
             break;
+        } else {
+            move = std::make_tuple(row, col, curRow, curCol, false, false);
+            moves.emplace_back(move);
         }
         curCol--;
         curRow--;
@@ -113,11 +119,14 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Bishop::generateAllMoves
         if (isOwnPiece(board, curRow, curCol)){
             break;
         }
-        move = std::make_tuple(row, col, curRow, curCol, false, false);
-        moves.emplace_back(move);
         // encountering opponent's piece (add position and break)
         if (isOpponentPiece(board, curRow, curCol)){
+            move = std::make_tuple(row, col, curRow, curCol, true, false);
+            moves.emplace_back(move);
             break;
+        } else {
+            move = std::make_tuple(row, col, curRow, curCol, false, false);
+            moves.emplace_back(move);
         }
         curCol--;
         curRow++;
@@ -131,11 +140,14 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Bishop::generateAllMoves
         if (isOwnPiece(board, curRow, curCol)){
             break;
         }
-        move = std::make_tuple(row, col, curRow, curCol, false, false);
-        moves.emplace_back(move);
         // encountering opponent's piece (add position and break)
         if (isOpponentPiece(board, curRow, curCol)){
+            move = std::make_tuple(row, col, curRow, curCol, true, false);
+            moves.emplace_back(move);
             break;
+        } else {
+            move = std::make_tuple(row, col, curRow, curCol, false, false);
+            moves.emplace_back(move);
         }
         curCol++;
         curRow++;

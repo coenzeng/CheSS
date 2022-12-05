@@ -120,12 +120,12 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Pawn::generateAllMoves(B
         }
         // condition 3 (top left diag)
         if(isOpponentPiece(board, row - 1, col - 1)){
-            move = std::make_tuple(row, col, row - 1, col - 1, false, false);
+            move = std::make_tuple(row, col, row - 1, col - 1, true, false);
             moves.emplace_back(move);
         }
         // condition 3 (top right diag)
         if(isOpponentPiece(board, row - 1, col + 1)){
-            move = std::make_tuple(row, col, row - 1, col + 1, false, false);
+            move = std::make_tuple(row, col, row - 1, col + 1, true, false);
             moves.emplace_back(move);
         }
         
@@ -144,12 +144,12 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Pawn::generateAllMoves(B
         }
         // condition 3 (bottom left diag)
         if(isOpponentPiece(board, row + 1, col - 1)){
-            move = std::make_tuple(row, col, row + 1, col - 1, false, false);
+            move = std::make_tuple(row, col, row + 1, col - 1, true, false);
             moves.emplace_back(move);
         }
         // condition 3 (bottom right diag)
         if(isOpponentPiece(board, row + 1, col + 1)){
-            move = std::make_tuple(row, col, row + 1, col + 1, false, false);
+            move = std::make_tuple(row, col, row + 1, col + 1, true, false);
             moves.emplace_back(move);
         }
 
