@@ -66,8 +66,8 @@ class Board {
     static std::pair<int, int> notationToCoordinates(std::string notation);
 
     //setter functions for all valid moves
-    void generateAllWhiteMoves();
-    void generateAllBlackMoves();
+    void generateAllWhiteMoves(bool isFirstCall);
+    void generateAllBlackMoves(bool isFirstCall);
 
     //getter functions for all valid moves
     std::vector<std::tuple<int, int, int, int, bool, bool>> getAllLegalWhiteMoves();

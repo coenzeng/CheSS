@@ -44,8 +44,8 @@ void Game::startSetup()
             //add conditions to leave 
 
             //generate all moves to ensure that Kings are not in check 
-            board->generateAllWhiteMoves();
-            board->generateAllBlackMoves();
+            board->generateAllWhiteMoves(false);
+            board->generateAllBlackMoves(false);
             
             if (board->hasOneWhiteKing() && board->hasOneBlackKing() && board->hasNoPawnsFirstLastRow() && !board->isCheck(true) && !board->isCheck(false)){
                 return;
@@ -127,13 +127,18 @@ void Game::startGame(std::string player1, std::string player2)
             //if a move is made, switch the players turn
             //check win conditions after a successful move
             //it is never possible for a player to start their turn with no legal moves 
-            board->generateAllWhiteMoves();
-            board->generateAllBlackMoves();
 
             if (currentPlayer == "white"){
+
+                //pass in TRUE to only include moves that don't check the white player themselves
+                //pass in false for black, since that check is not neccessary
+                board->generateAllWhiteMoves(true);
                 if (whitePlayer->makeMove(board.get())){
                     currentPlayer = "black";
+                    studio.render();
+
                     //check win conditions
+                    board->generateAllWhiteMoves(true);
                     if (board->isCheck(false)){
                         studio.render();
                         std::cout << "Black is in check." << std::endl; 
@@ -144,33 +149,35 @@ void Game::startGame(std::string player1, std::string player2)
                             return;
                         } 
                     } else if (board->isStalemate(false)){ //NOT in check
+                            studio.render();
                             std::cout << "Stalemate." << std::endl;
                             return;
                     }
                 }
             } else {
+                board->generateAllBlackMoves(true);
                 if (blackPlayer->makeMove(board.get())){
                     currentPlayer = "white";
+                    studio.render();
 
                     //check win conditions
+                    board->generateAllBlackMoves(true);
                     if (board->isCheck(true)){
                         studio.render();
                         std::cout << "White is in check." << std::endl; 
                         if (board->isCheckmate(true)){
                             incrementBlackScore();
-                            std::cout << "Checkmate, white wins." << std::endl;
+                            std::cout << "Checkmate, black wins." << std::endl;
                             return;
                         }
                     } else if (board->isStalemate(true)){
+                            studio.render();
                             std::cout << "Stalemate." << std::endl;
                             return;
                     }
 
                 }
             }
-            studio.render();
-
-            
         }
 
     }

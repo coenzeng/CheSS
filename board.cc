@@ -143,6 +143,9 @@ void Board::setPiece(char pieceSymbol, int row, int col)
         case 'R':
             chessBoard[row][col] = std::make_unique<Rook>(true); 
             break;
+        case ' ':
+            chessBoard[row][col] = std::make_unique<BlankPiece>(true); 
+            break;
         default:
             break;
     }
@@ -164,8 +167,6 @@ void Board::makeMove(int startRow, int startCol, int endRow, int endCol)
     int prevStartCol = std::get<1>(this->previousMove);
     int prevEndRow = std::get<2>(this->previousMove);
     int prevEndCol = std::get<3>(this->previousMove);
-    std::cout<<"Previous move: (startRow, startCol) to (endRow, endCol)"<<std::endl;
-    std::cout << "("<<prevStartRow<<", "<<prevStartCol<<") to ("<<prevEndRow<<", "<<prevEndCol<<")"<<std::endl;
 
     if(isEnPassant){
         // check if the player used the en passant move
@@ -195,7 +196,6 @@ bool Board::isValidCoordinate(size_t row, size_t col){
     return true;
 }
 
-
 bool Board::willPutCurrentPlayerInCheck(bool isWhitePlayer, int startRow, int startCol, int endRow, int endCol){
 
     //remember the current configuration of the board 
@@ -203,22 +203,24 @@ bool Board::willPutCurrentPlayerInCheck(bool isWhitePlayer, int startRow, int st
     char endPieceSymbol = charAt(endRow, endCol);
 
     //make a temporary move to see if the current player gets into check
-    makeMove(startRow, startCol, endRow, endCol);
+    setPiece(startPieceSymbol, endRow, endCol); 
+    unSetPiece(startRow, startCol);
 
     //generate all moves of the opposing player
     if (isWhitePlayer){
-        generateAllBlackMoves();
+        generateAllBlackMoves(false);
     } else {
-        generateAllWhiteMoves();
+        generateAllWhiteMoves(false);
     }
 
-    //if the current is in check, UNDO the move
+    //UNDO the move
     if (isCheck(isWhitePlayer)){
         setPiece(startPieceSymbol, startRow, startCol);
         setPiece(endPieceSymbol, endRow, endCol);
         return true;
     }
-
+    setPiece(startPieceSymbol, startRow, startCol);
+    setPiece(endPieceSymbol, endRow, endCol);
     return false;
 }
 //check that the move is in the movelist of all possible moves 
@@ -260,6 +262,7 @@ bool Board::isCheck(bool checkingWhiteKing)
     //if the lengths are not equal, then "allBlackMoves" has one or more moves that could kill the king
     //therefore white is in check
     if (checkingWhiteKing){
+        
         return allBlackMoves.size() != allLegalBlackMoves.size();
     } else {
         return allWhiteMoves.size() != allLegalWhiteMoves.size();
@@ -299,11 +302,29 @@ bool Board::isCheck(bool checkingWhiteKing)
 bool Board::isCheckmate(bool checkingWhite)
 {
     if (checkingWhite){
-        if (allLegalWhiteMoves.empty()) return true;
+        generateAllWhiteMoves(true);
+        for (size_t index = 0; index < allLegalWhiteMoves.size(); index++){
+            int startRow = std::get<0>(allLegalWhiteMoves[index]);
+            int startCol = std::get<1>(allLegalWhiteMoves[index]);
+            int endRow = std::get<2>(allLegalWhiteMoves[index]);
+            int endCol = std::get<3>(allLegalWhiteMoves[index]);
+            if (!willPutCurrentPlayerInCheck(checkingWhite, startRow, startCol, endRow, endCol)){
+                return false;
+            }
+        }
     } else {
-        if (allLegalBlackMoves.empty()) return true;
+        generateAllBlackMoves(true);
+        for (size_t index = 0; index < allLegalBlackMoves.size(); index++){
+            int startRow = std::get<0>(allLegalBlackMoves[index]);
+            int startCol = std::get<1>(allLegalBlackMoves[index]);
+            int endRow = std::get<2>(allLegalBlackMoves[index]);
+            int endCol = std::get<3>(allLegalBlackMoves[index]);
+            if (!willPutCurrentPlayerInCheck(checkingWhite, startRow, startCol, endRow, endCol)){
+                return false;
+            }
+        }
     }
-    return false;
+    return true;
 };
 
 //first ensure that the king is currently NOT in check, which is done in game.cc
@@ -311,11 +332,29 @@ bool Board::isCheckmate(bool checkingWhite)
 bool Board::isStalemate(bool checkingWhite)
 {
     if (checkingWhite){
-        if (allLegalWhiteMoves.empty()) return true;
+        generateAllWhiteMoves(true);
+        for (size_t index = 0; index < allLegalWhiteMoves.size(); index++){
+            int startRow = std::get<0>(allLegalWhiteMoves[index]);
+            int startCol = std::get<1>(allLegalWhiteMoves[index]);
+            int endRow = std::get<2>(allLegalWhiteMoves[index]);
+            int endCol = std::get<3>(allLegalWhiteMoves[index]);
+            if (!willPutCurrentPlayerInCheck(checkingWhite, startRow, startCol, endRow, endCol)){
+                return false;
+            }
+        }
     } else {
-        if (allLegalBlackMoves.empty()) return true;
+        generateAllBlackMoves(true);
+        for (size_t index = 0; index < allLegalBlackMoves.size(); index++){
+            int startRow = std::get<0>(allLegalBlackMoves[index]);
+            int startCol = std::get<1>(allLegalBlackMoves[index]);
+            int endRow = std::get<2>(allLegalBlackMoves[index]);
+            int endCol = std::get<3>(allLegalBlackMoves[index]);
+            if (!willPutCurrentPlayerInCheck(checkingWhite, startRow, startCol, endRow, endCol)){
+                return false;
+            }
+        }
     }
-    return false;
+    return true;
 };
 
 
@@ -376,7 +415,7 @@ std::pair<int, int> Board::notationToCoordinates(std::string notation){
 //populates "allWhiteMoves" and "allLegalWhiteMoves"
 //including moves that capture the enemy King
 
-void Board::generateAllWhiteMoves()
+void Board::generateAllWhiteMoves(bool isFirstCall)
 {
     //create new vector 
     if (!allWhiteMoves.empty()){
@@ -396,11 +435,22 @@ void Board::generateAllWhiteMoves()
                 moves = getPiece(row, col)->generateAllMoves(this, row, col);
                 //append this list to the list of allWhiteMoves
                 for (size_t index = 0; index < moves.size(); index++){
-                    allWhiteMoves.emplace_back(moves[index]);
                     
+                    int startRow = std::get<0>(moves[index]);
+                    int startCol = std::get<1>(moves[index]);
                     int endRow = std::get<2>(moves[index]);
                     int endCol = std::get<3>(moves[index]);
-
+                    //SKIP this move if puts current player in check
+                    //Only check this condition on the first call
+                    //or else infinite recursion happens
+                    if (isFirstCall){
+                        if (willPutCurrentPlayerInCheck(true, startRow, startCol, endRow, endCol)){
+                            continue;
+                        }
+                    }
+        
+                    allWhiteMoves.emplace_back(moves[index]);
+                    
                     //killing a king is not legal
                     if (charAt(endRow, endCol) != 'k'){
                         allLegalWhiteMoves.emplace_back(moves[index]);
@@ -414,7 +464,7 @@ void Board::generateAllWhiteMoves()
 
 //populates "allBlackMoves" with a list of all legal black moves
 //including moves that capture the enemy King
-void Board::generateAllBlackMoves()
+void Board::generateAllBlackMoves(bool isFirstCall)
 {
     //create new vector 
     if(!allBlackMoves.empty()){
@@ -435,11 +485,22 @@ void Board::generateAllBlackMoves()
                 
                 //append this list to the list of all Black Moves
                 for (size_t index = 0; index < moves.size(); index++){
-                    allBlackMoves.emplace_back(moves[index]);
                     
+                    int startRow = std::get<0>(moves[index]);
+                    int startCol = std::get<1>(moves[index]);
                     int endRow = std::get<2>(moves[index]);
                     int endCol = std::get<3>(moves[index]);
 
+                    //SKIP this move if puts current player in check
+                    //Only check this condition on the first call
+                    //or else infinite recursion happens
+                    if (isFirstCall){
+                        if (willPutCurrentPlayerInCheck(false, startRow, startCol, endRow, endCol)){
+                            continue;
+                        }
+                    }
+
+                    allBlackMoves.emplace_back(moves[index]);
                     //killing a king is not legal
                     if (charAt(endRow, endCol) != 'K'){
                         allLegalBlackMoves.emplace_back(moves[index]);

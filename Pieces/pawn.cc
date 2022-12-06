@@ -134,7 +134,7 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Pawn::generateAllMoves(B
         int prevEndCol = std::get<3>(board->previousMove);
 
         // check for black pawn to the left
-        if(isValidCoordinates(row, col - 1) && board->charAt(row, col - 1) == 'p'){
+        if(board->isValidCoordinate(row, col - 1) && board->charAt(row, col - 1) == 'p'){
             // check if previous move has same final location as opponent pawn and if previous pawn moved two squares
             if(prevEndRow == row && prevEndCol == (col - 1) && prevStartRow == 1 && prevEndRow == 3){
                 std::cout<<"Inside enpassant condition 1 in pawn.cc"<<std::endl;
@@ -143,7 +143,7 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Pawn::generateAllMoves(B
                 board->isEnPassant = true;
             }
         // check for black pawn to the right
-        }else if(isValidCoordinates(row, col + 1) && board->charAt(row, col + 1) == 'p'){
+        }else if(board->isValidCoordinate(row, col + 1) && board->charAt(row, col + 1) == 'p'){
             if(prevEndRow == row && prevEndCol == (col + 1) && prevStartRow == 1 && prevEndRow == 3){
                 std::cout<<"Inside enpassant condition 2 in pawn.cc"<<std::endl;
                 move = std::make_tuple(row, col, row - 1, col + 1, true, false);
@@ -181,7 +181,7 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Pawn::generateAllMoves(B
         int prevEndCol = std::get<3>(board->previousMove);
 
         // check for white pawn to the left
-        if(isValidCoordinates(row, col - 1) && board->charAt(row, col - 1) == 'P'){
+        if(board->isValidCoordinate(row, col - 1) && board->charAt(row, col - 1) == 'P'){
             // check if previous move has same final location as opponent pawn and if previous pawn moved two squares
             if(prevEndRow == row && prevEndCol == (col - 1) && prevStartRow == 6 && prevEndRow == 4){
                 std::cout<<"Inside enpassant condition 3 in pawn.cc"<<std::endl;
@@ -190,7 +190,7 @@ std::vector<std::tuple<int, int, int, int, bool, bool>> Pawn::generateAllMoves(B
                 board->isEnPassant = true;
             }
         // check for black pawn to the right
-        }else if(isValidCoordinates(row, col + 1) && board->charAt(row, col + 1) == 'P'){
+        }else if(board->isValidCoordinate(row, col + 1) && board->charAt(row, col + 1) == 'P'){
             if(prevEndRow == row && prevEndCol == (col + 1) && prevStartRow == 6 && prevEndRow == 4){
                 std::cout<<"Inside enpassant condition 4 in pawn.cc"<<std::endl;
                 move = std::make_tuple(row, col, row + 1, col + 1, true, false);
